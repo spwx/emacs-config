@@ -439,6 +439,7 @@
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    '("f019002925408f081e767c515e4fb4b1d7f1462228d6cd32ff66f06a43671527" "1fefcf9915617538b409d8aba3c6bbefddfcf2a80db09741aeef1457e1809c2b" "40352d95bc42c2e3acb7fc75afb3029d81a76897e14e9438857729cc87630980" "9fba87dbc0f14d5650006893ed53088be71f16d57b749394d9c485ef2326e85f" "79ab8329f4522beaa2285888d38f6204bb60f324912660d774a412a79e336d6c" "9ddb83c12595e789e9abd04a5c0705661748776223a794a6f64669352b956e79" "29a073e66535bad18e11e9bcaa17d7f2d17e4c79f01023e59e9841633915c232" "a087e01778a85f8381b2aa2b7b0832951aea078621b38844b6c8c8d638d73e3b" "97283a649cf1ffd7be84dde08b45a41faa2a77c34a4832d3884c7f7bba53f3f5" "aa04c854054e8d43245bd67ca619a7bede9171e2a2efb1b2c26caf1d031497eb" "d0dc7861b33d68caa92287d39cf8e8d9bc3764ec9c76bdb8072e87d90546c8a3" default))
+ '(magit-display-buffer-function 'magit-display-buffer-same-window-except-diff-v1)
  '(package-selected-packages
    '(magit consult lsp-mode ef-themes yasnippet which-key org-modern org-appear nerd-icons-dired jinx gruvbox-theme evil-surround evil-org evil-goggles evil-commentary evil-collection doom-themes doom-modeline corfu cape)))
 (put 'dired-find-alternate-file 'disabled nil)
