@@ -1,6 +1,9 @@
+;; Hide startup screen
 (setq inhibit-startup-screen t)
 
-(defun region-to-gfm-clipboard ()
+;; Convert the selected region from Org to GitHub Flavored Markdown and save it
+;; to the clipboard
+(defun spw-region-to-gfm-clipboard ()
   "Convert the selected region to GFM and copy to clipboard."
   (interactive)
   (if (use-region-p)
@@ -24,39 +27,44 @@
            (message "Error occurred: %s" (error-message-string err)))))
     (message "No region selected. Please select a region first.")))
 
-;; Use a vertical picker
-;; (fido-vertical-mode)
+;; Create backup directory if it doesn't exist
+(unless (file-exists-p "~/.backups")
+  (make-directory "~/.backups"))
 
+;; Store all backup and auto-save files in the backup directory
+(setq-default backup-directory-alist '(("." . "~/.backups"))
+              auto-save-file-name-transforms '((".*" "~/.backups/" t))
+              auto-save-list-file-prefix "~/.backups/")
+
+;; Use versioned backups
+(setq-default version-control t     ; Use version numbers for backups
+              kept-new-versions 10  ; Number of newest versions to keep
+              kept-old-versions 0   ; Number of oldest versions to keep
+              delete-old-versions t ; Don't ask to delete excess backup versions
+              backup-by-copying t)  ; Copy all files, don't rename them
+
+;; Break lines at 80 characters.
 (setq-default fill-column 80)  ; or any other number you prefer
 (add-hook 'text-mode-hook 'turn-on-auto-fill)
 
+;; Delete trailing white space on save.
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
-;; Open recent files
-;; Disabled, using Consult now.
-;; (keymap-global-set "C-x C-r" 'recentf-open)
-
-;; Flash the mode line instead of ringing the system bell
-(defun flash-mode-line ()
-  (invert-face 'mode-line)
-  (run-with-timer 0.1 nil #'invert-face 'mode-line))
-(setq visible-bell nil
-      ring-bell-function 'flash-mode-line)
+;; Show a menu on right click.
+(when (display-graphic-p)
+  (context-menu-mode))
 
 ;; Enable tabs
 ;; `previous-buffer' and `next-buffer' change tabs.
 ;; `bury-buffer' hides a tab.
 (global-tab-line-mode)
 
-;; Use dired-x
-(require 'dired-x)
-
 ;; Hide UI elements
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 
-;; Show the column number in the modeline
-(column-number-mode)
+;; Use dired-x
+(require 'dired-x)
 
 ;; Automatically switch to help windows
 (setq help-window-select t)
@@ -86,16 +94,19 @@
 (use-package yasnippet-snippets
   :ensure t)
 (use-package yasnippet-capf
+  :ensure t
   :after cape
   :config
   (add-to-list 'completion-at-point-functions #'yasnippet-capf))
 
+;; Orderless searching for Consult and Corfu
 (use-package orderless
   :ensure t
   :custom
   (completion-styles '(orderless basic))
   (completion-category-overrides '((file (styles basic partial-completion)))))
 
+;; Display completion candidates in buffer
 (use-package corfu
   :ensure t
   :init
@@ -113,8 +124,7 @@
   :after corfu
   :config
   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
-
-;; Add extensions
+;; Add backends to populate Corfu
 (use-package cape
   :ensure t
   ;; Bind prefix keymap providing all Cape commands under a mnemonic key.
@@ -138,21 +148,13 @@
 ;; Enable vertico
 (use-package vertico
   :ensure t
-  ;; :custom
-  ;; (vertico-scroll-margin 0) ;; Different scroll margin
-  ;; (vertico-count 20) ;; Show more candidates
-  ;; (vertico-resize t) ;; Grow and shrink the Vertico minibuffer
-  ;; (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
   :init
   (vertico-mode))
 ;; Enable rich annotations using the Marginalia package
 (use-package marginalia
   :ensure t
-  ;; Bind `marginalia-cycle' locally in the minibuffer.  To make the binding
-  ;; available in the *Completions* buffer, add it to the
-  ;; `completion-list-mode-map'.
-  :bind (:map minibuffer-local-map
-         ("M-A" . marginalia-cycle))
+  ;; Cycle through the annotations
+  :bind (:map minibuffer-local-map ("M-A" . marginalia-cycle))
   :init
   ;; Marginalia must be activated in the :init section of use-package such that
   ;; the mode gets enabled right away. Note that this forces loading the
@@ -288,7 +290,23 @@
   (load-theme 'ef-maris-dark t))
 (use-package doom-modeline
   :ensure t
-  :init (doom-modeline-mode 1))
+  :init
+  ;; ;; Show the column number in the modeline
+  (column-number-mode)
+  ;; Setup date & time display
+  (setopt display-time-default-load-average nil)
+  (setopt display-time-24hr-format t)
+  (setopt display-time-day-and-date t)
+  (display-time)
+  ;; Flash the mode line instead of ringing the system bell
+  (defun flash-mode-line ()
+    (invert-face 'mode-line)
+    (run-with-timer 0.1 nil #'invert-face 'mode-line))
+  (setq visible-bell nil
+        ring-bell-function 'flash-mode-line)
+  ;; Make the modeline pretty
+  (doom-modeline-mode 1))
+
 
 (defun spw-org-shift-right ()
   (interactive)
@@ -344,14 +362,14 @@
   :init
   (setq org-time-stamp-custom-formats
       '("<%Y-%m-%d %a %H:%M>" . "<%Y-%m-%d %a %H:%M>"))
-  ;; Follow links to files in the same window.
-  (setf (cdr (assoc 'file org-link-frame-setup)) 'find-file)
   ;; Indent the content of a heading.
   ;; (setq org-indent-indentation-per-level 0)
   ;; (setq org-adapt-indentation nil)
   (setq org-hide-leading-stars t)
   (setq org-startup-indented t)
   :config
+  ;; Follow links to files in the same window.
+  (setf (cdr (assoc 'file org-link-frame-setup)) 'find-file)
   (add-hook 'org-mode-hook (lambda ()
                              (electric-indent-local-mode -1))))
 ;; (use-package org-modern
@@ -370,7 +388,7 @@
 ;;    brew install enchant
 ;;    cd ~/.config/emacs/elpa/jinx*
 ;;    gcc -O2 -Wall -Wextra -fPIC -shared -o jinx-mod.dylib jinx-mod.c \
-;;      -I/opt/homebrew/opt/enchant/include/enchant-2 \
+;;      -I/opt/homebrew/opt/enchant/include/enchant-2 -I. \
 ;;      -L/opt/homebrew/opt/enchant/lib -lenchant-2
 (use-package jinx
   :ensure t
@@ -389,9 +407,7 @@
          (lsp-mode . lsp-enable-which-key-integration))
   :commands lsp
   :config (evil-define-key 'normal rustic-mode-map "K" 'lsp-describe-thing-at-point))
-;; optionally
 (use-package lsp-ui :ensure t :commands lsp-ui-mode)
-;; optionally if you want to use debugger
 (use-package dap-mode :ensure t)
 
 (use-package rustic
