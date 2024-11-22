@@ -87,6 +87,7 @@
   :config (which-key-mode))
 
 (use-package treesit-auto
+  :ensure t
   :custom
   (treesit-auto-install 'prompt)
   :config
