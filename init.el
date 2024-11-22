@@ -334,6 +334,12 @@
   (evil-define-key 'visual org-mode-map "<<" 'org-do-promote)
   (evil-define-key 'normal org-mode-map ">>" 'spw-org-shift-right)
   (evil-define-key 'normal org-mode-map "<<" 'spw-org-shift-left)
+  (evil-define-key 'normal emacs-lisp-mode-map (kbd "K")
+    (lambda ()
+      (interactive)
+      (let ((symbol (thing-at-point 'symbol)))
+      (when symbol
+  	(describe-symbol (intern symbol))))))
   (evil-mode 1))
 (use-package evil-collection
   :after evil
