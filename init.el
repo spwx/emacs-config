@@ -372,16 +372,35 @@
   (setf (cdr (assoc 'file org-link-frame-setup)) 'find-file)
   (add-hook 'org-mode-hook (lambda ()
                              (electric-indent-local-mode -1))))
-;; (use-package org-modern
-;;   :ensure t
-;;   :init (setq org-modern-star 'replace)
-;;   :hook (org-mode . org-modern-mode))
 (use-package org-appear
   :ensure t
   :init
   (setq org-appear-autolinks t)
   (setq org-hide-emphasis-markers t)
   :hook (org-mode . org-appear-mode))
+(use-package org-journal
+  :ensure t
+  :defer t
+  :init
+  ;; Change default prefix key; needs to be set before loading org-journal
+  (setq org-journal-prefix-key "C-c j ")
+  (defun open-and-focus-current-journal-file ()
+  "Open the current day's journal file and focus on it."
+  (interactive)
+  (org-journal-open-current-journal-file)
+  (let ((journal-buffer (org-journal-get-entry-path)))
+    (when journal-buffer
+      (switch-to-buffer (find-buffer-visiting journal-buffer)))))
+
+  (add-hook 'after-init-hook 'open-and-focus-current-journal-file)
+  :bind ("C-c j j" . org-journal-new-entry)
+  :config
+  (setq org-journal-dir "~/org/journal/"
+	org-journal-find-file 'find-file
+	org-journal-file-format "%Y/%m-%b/%d-%a.org"
+	org-journal-date-format "%A, %d %B %Y"
+        org-journal-file-type 'daily))
+
 
 ;; Setup spell checking
 ;; To compile the `dylib` for this package on MacOS:
