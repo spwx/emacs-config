@@ -397,12 +397,20 @@
   (setq evil-want-C-u-scroll t)
   (setq evil-want-keybinding nil)
   :config
+  (evil-set-leader nil (kbd "SPC"))
   ;; global keys
   (evil-define-key '(normal visual) 'global (kbd "SPC u") 'universal-argument)
   (evil-define-key '(normal visual) 'global (kbd "g h") 'evil-first-non-blank)
   (evil-define-key '(normal visual) 'global (kbd "g l") 'evil-end-of-line)
   (evil-define-key '(normal visual) 'global (kbd "H") 'previous-buffer)
   (evil-define-key '(normal visual) 'global (kbd "L") 'next-buffer)
+  (evil-define-key '(normal visual) 'global (kbd "SPC w h") 'evil-window-left)
+  (evil-define-key '(normal visual) 'global (kbd "SPC w j") 'evil-window-down)
+  (evil-define-key '(normal visual) 'global (kbd "SPC w k") 'evil-window-up)
+  (evil-define-key '(normal visual) 'global (kbd "SPC w l") 'evil-window-right)
+  (evil-define-key '(normal visual) 'global (kbd "SPC w c") 'evil-window-delete)
+  (evil-define-key '(normal visual) 'global (kbd "SPC w v") 'evil-window-vsplit)
+  (evil-define-key '(normal visual) 'global (kbd "SPC w s") 'evil-window-split)
   ;; file opening keys
   (evil-define-key '(normal visual) 'global (kbd "SPC f s") 'save-buffer)
   (evil-define-key '(normal visual) 'global (kbd "SPC f f") 'consult-buffer)
