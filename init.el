@@ -400,17 +400,18 @@
   :after evil
   :ensure t
   :config
-  ;; (evil-define-key 'normal org-mode-map ">>" 'org-demote-subtree)
-  ;; (evil-define-key 'normal org-mode-map "<<" 'org-promote-subtree)
   (evil-collection-init))
 (use-package evil-surround
+  :after evil
   :ensure t
   :config
   (global-evil-surround-mode 1))
 (use-package evil-commentary
+  :after evil
   :ensure t
   :config (evil-commentary-mode))
 (use-package evil-goggles
+  :after evil
   :ensure t
   :config
   (evil-goggles-mode)
