@@ -1,3 +1,6 @@
+;; Add homebrew to the PATH
+(setenv "PATH" (concat "/opt/homebrew/bin:" (getenv "PATH"))) (add-to-list 'exec-path "/opt/homebrew/bin")
+
 ;; Hide startup screen
 (setq inhibit-startup-screen t)
 
