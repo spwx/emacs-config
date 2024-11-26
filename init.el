@@ -477,17 +477,31 @@
   :bind (("M-$" . jinx-correct)
          ("C-M-$" . jinx-languages)))
 
+;; (use-package lsp-mode
+;;   :ensure t
+;;   :init
+;;   (setq lsp-keymap-prefix "C-c l")
+;;   (setq lsp-inlay-hint-enable t)
+;;   :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+;;          (rustic-mode . lsp)
+;;          ;; if you want which-key integration
+;;          (lsp-mode . lsp-enable-which-key-integration))
+;;   :commands (lsp)
+;; (use-package lsp-ui :ensure t :commands lsp-ui-mode)
+;; (use-package dap-mode :ensure t)
+
 (use-package lsp-mode
   :ensure t
   :init
+  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
   (setq lsp-keymap-prefix "C-c l")
   (setq lsp-inlay-hint-enable t)
   :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
          (rustic-mode . lsp)
+         (python-mode . lsp)
          ;; if you want which-key integration
          (lsp-mode . lsp-enable-which-key-integration))
-  :commands lsp
-  :config (evil-define-key 'normal rustic-mode-map "K" 'lsp-describe-thing-at-point))
+  :commands lsp)
 (use-package lsp-ui :ensure t :commands lsp-ui-mode)
 (use-package dap-mode :ensure t)
 
@@ -495,6 +509,7 @@
   :ensure t
   :config
   (setq rustic-format-on-save nil)
+  (evil-define-key 'normal rustic-mode-map "K" 'lsp-describe-thing-at-point)
   :custom
   (rustic-cargo-use-last-stored-arguments t))
 
