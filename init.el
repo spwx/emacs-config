@@ -4,6 +4,9 @@
 ;; Hide startup screen
 (setq inhibit-startup-screen t)
 
+;; Highlight the current line
+(global-hl-line-mode 1)
+
 ;; Convert the selected region from Org to GitHub Flavored Markdown and save it
 ;; to the clipboard
 (defun spw-region-to-gfm-clipboard ()
