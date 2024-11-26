@@ -500,7 +500,9 @@
   :custom
   (rustic-cargo-use-last-stored-arguments t))
 
-(use-package magit :ensure t)
+;; Magit needs a newer version of transient
+(use-package transient :ensure t)
+(use-package magit :ensure t :after transient)
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
