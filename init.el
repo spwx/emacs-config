@@ -368,18 +368,27 @@
 
 ;; Evil keybinding
 (use-package evil
+  :ensure t
   :init
   (setq evil-want-C-u-scroll t)
   (setq evil-want-keybinding nil)
   :config
-  (define-key evil-normal-state-map (kbd "g h") 'evil-first-non-blank)
-  (define-key evil-normal-state-map (kbd "g l") 'evil-end-of-line)
-  (define-key evil-normal-state-map (kbd "H") 'previous-buffer)
-  (define-key evil-normal-state-map (kbd "L") 'next-buffer)
-  (evil-define-key 'visual org-mode-map ">>" 'org-do-demote)
-  (evil-define-key 'visual org-mode-map "<<" 'org-do-promote)
-  (evil-define-key 'normal org-mode-map ">>" 'spw-org-shift-right)
-  (evil-define-key 'normal org-mode-map "<<" 'spw-org-shift-left)
+  ;; global keys
+  (evil-define-key '(normal visual) 'global (kbd "SPC u") 'universal-argument)
+  (evil-define-key '(normal visual) 'global (kbd "g h") 'evil-first-non-blank)
+  (evil-define-key '(normal visual) 'global (kbd "g l") 'evil-end-of-line)
+  (evil-define-key '(normal visual) 'global (kbd "H") 'previous-buffer)
+  (evil-define-key '(normal visual) 'global (kbd "L") 'next-buffer)
+  ;; file opening keys
+  (evil-define-key '(normal visual) 'global (kbd "SPC f s") 'save-buffer)
+  (evil-define-key '(normal visual) 'global (kbd "SPC f f") 'consult-buffer)
+  ;; org-mode keys
+  (evil-define-key 'visual org-mode-map (kbd ">>") 'org-do-demote)
+  (evil-define-key 'visual org-mode-map (kbd "<<") 'org-do-promote)
+  (evil-define-key 'normal org-mode-map (kbd ">>") 'spw-org-shift-right)
+  (evil-define-key 'normal org-mode-map (kbd "<<") 'spw-org-shift-left)
+  (evil-define-key 'normal org-mode-map (kbd "RET") 'org-open-at-point)
+  ;; emacs-lisp-mode keys
   (evil-define-key 'normal emacs-lisp-mode-map (kbd "K")
     (lambda ()
       (interactive)
