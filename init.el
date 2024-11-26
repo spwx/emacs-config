@@ -452,7 +452,10 @@
   :config
   (evil-goggles-mode)
   (evil-goggles-use-diff-faces))
-
+(use-package evil-anzu
+  :ensure t
+  :after evil
+  :config (global-anzu-mode))
 
 ;; Org-Mode stuff
 (use-package org
