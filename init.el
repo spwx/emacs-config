@@ -395,8 +395,8 @@
 (use-package evil
   :ensure t
   :init
-  (setq evil-want-C-u-scroll t)
   (setq evil-want-keybinding nil)
+  (setq evil-want-C-u-scroll t)
   :config
   (evil-set-leader nil (kbd "SPC"))
   ;; global keys
