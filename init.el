@@ -357,17 +357,38 @@
   (doom-modeline-mode 1))
 (use-package anzu :ensure t :config (global-anzu-mode))
 
+(defun is-first-line-heading ()
+  (interactive)
+  (save-excursion
+    (goto-char (region-beginning))
+    (beginning-of-line)
+    (looking-at org-heading-regexp)))
+
 (defun spw-org-shift-right ()
   (interactive)
   (if (org-at-heading-p)
       (org-demote-subtree)
     (evil-shift-right-line 1)))
 
+(defun spw-org-shift-right-visual ()
+  (interactive)
+  (if (is-first-line-heading)
+      (org-do-demote)
+    (evil-shift-right evil-visual-beginning evil-visual-end)
+    (evil-visual-restore)))
+
 (defun spw-org-shift-left ()
   (interactive)
   (if (org-at-heading-p)
       (org-promote-subtree)
     (evil-shift-left-line 1)))
+
+(defun spw-org-shift-left-visual ()
+  (interactive)
+  (if (is-first-line-heading)
+      (org-do-promote)
+    (evil-shift-left evil-visual-beginning evil-visual-end)
+    (evil-visual-restore)))
 
 ;; Evil keybinding
 (use-package evil
@@ -386,8 +407,10 @@
   (evil-define-key '(normal visual) 'global (kbd "SPC f s") 'save-buffer)
   (evil-define-key '(normal visual) 'global (kbd "SPC f f") 'consult-buffer)
   ;; org-mode keys
-  (evil-define-key 'visual org-mode-map (kbd ">>") 'org-do-demote)
-  (evil-define-key 'visual org-mode-map (kbd "<<") 'org-do-promote)
+  ;; (evil-define-key 'visual org-mode-map (kbd ">>") 'org-do-demote)
+  (evil-define-key 'visual org-mode-map (kbd ">>") 'spw-org-shift-right-visual)
+  ;; (evil-define-key 'visual org-mode-map (kbd "<<") 'org-do-promote)
+  (evil-define-key 'visual org-mode-map (kbd "<<") 'spw-org-shift-left-visual)
   (evil-define-key 'normal org-mode-map (kbd ">>") 'spw-org-shift-right)
   (evil-define-key 'normal org-mode-map (kbd "<<") 'spw-org-shift-left)
   (evil-define-key 'normal org-mode-map (kbd "RET") 'org-open-at-point)
@@ -468,15 +491,13 @@
 
 
 ;; Setup spell checking
-;; To compile the `dylib` for this package on MacOS:
-;;    brew install enchant
-;;    cd ~/.config/emacs/elpa/jinx*
-;;    gcc -O2 -Wall -Wextra -fPIC -shared -o jinx-mod.dylib jinx-mod.c \
-;;      -I/opt/homebrew/opt/enchant/include/enchant-2 -I. \
-;;      -L/opt/homebrew/opt/enchant/lib -lenchant-2
 (use-package jinx
   :ensure t
   :hook (emacs-startup . global-jinx-mode)
+  :init
+  (evil-define-key '(normal visual) 'global (kbd "z =") 'jinx-correct)
+  (evil-define-key '(normal visual) 'global (kbd "] s") 'jinx-next)
+  (evil-define-key '(normal visual) 'global (kbd "[ s") 'jinx-previous)
   :bind (("M-$" . jinx-correct)
          ("C-M-$" . jinx-languages)))
 
