@@ -135,6 +135,8 @@
   (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode))
 
+(use-package nyan-mode :ensure t :config (nyan-mode))
+
 (use-package yasnippet
   :ensure t
   :config
