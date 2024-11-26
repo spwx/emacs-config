@@ -352,7 +352,7 @@
         ring-bell-function 'flash-mode-line)
   ;; Make the modeline pretty
   (doom-modeline-mode 1))
-
+(use-package anzu :ensure t :config (global-anzu-mode))
 
 (defun spw-org-shift-right ()
   (interactive)
