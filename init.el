@@ -521,6 +521,7 @@
   :config
   (setq rustic-format-on-save nil)
   (evil-define-key 'normal rustic-mode-map "K" 'lsp-describe-thing-at-point)
+  (setq rustic-analyzer-command '("~/.cargo/bin/rust-analyzer"))
   :custom
   (rustic-cargo-use-last-stored-arguments t))
 
