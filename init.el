@@ -421,9 +421,7 @@
   (evil-define-key '(normal visual) 'global (kbd "SPC f s") 'save-buffer)
   (evil-define-key '(normal visual) 'global (kbd "SPC f f") 'consult-buffer)
   ;; org-mode keys
-  ;; (evil-define-key 'visual org-mode-map (kbd ">>") 'org-do-demote)
   (evil-define-key 'visual org-mode-map (kbd ">>") 'spw-org-shift-right-visual)
-  ;; (evil-define-key 'visual org-mode-map (kbd "<<") 'org-do-promote)
   (evil-define-key 'visual org-mode-map (kbd "<<") 'spw-org-shift-left-visual)
   (evil-define-key 'normal org-mode-map (kbd ">>") 'spw-org-shift-right)
   (evil-define-key 'normal org-mode-map (kbd "<<") 'spw-org-shift-left)
