@@ -137,6 +137,16 @@
 
 (use-package nyan-mode :ensure t :config (nyan-mode))
 
+(use-package nerd-icons-dired
+  :ensure t
+  :hook
+  (dired-mode . nerd-icons-dired-mode))
+
+(use-package diredfl
+  :ensure t
+  :config
+  (diredfl-global-mode))
+
 (use-package yasnippet
   :ensure t
   :config
@@ -329,11 +339,6 @@
 (use-package savehist
   :init
   (savehist-mode))
-
-(use-package nerd-icons-dired
-  :ensure t
-  :hook
-  (dired-mode . nerd-icons-dired-mode))
 
 (use-package ef-themes
   :ensure t
