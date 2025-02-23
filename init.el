@@ -639,14 +639,13 @@
 (use-package transient :ensure t)
 (use-package magit :ensure t :after transient)
 
-;; (use-package ultra-scroll
-;;   ;:load-path "~/code/emacs/ultra-scroll" ; if you git clone'd instead of package-vc-install
-;;   :ensure (:host github :repo "jdtsmith/ultra-scroll")
-;;   :init
-;;   (setq scroll-conservatively 101 ; important!
-;;         scroll-margin 0)
-;;   :config
-;;  (ultra-scroll-mode 1))
+(use-package ultra-scroll
+  :ensure (:host github :repo "jdtsmith/ultra-scroll")
+  :init
+  (setq scroll-conservatively 101 ; important!
+        scroll-margin 0)
+  :config
+ (ultra-scroll-mode 1))
 
 
 (custom-set-faces
