@@ -161,19 +161,6 @@
   :config
   (diredfl-global-mode))
 
-;; (use-package yasnippet
-;;   :ensure t
-;;   :config
-;;   (setq yas-snippet-dirs (append yas-snippet-dirs '("~/.yasnippet")))
-;;   (yas-global-mode 1))
-;; (use-package yasnippet-snippets
-;;   :ensure t)
-;; (use-package yasnippet-capf
-;;   :ensure t
-;;   :after cape
-;;   :config
-;;   (add-to-list 'completion-at-point-functions #'yasnippet-capf))
-
 ;; Configure Tempel
 (use-package tempel
   :ensure t
@@ -670,5 +657,5 @@
  '(org-agenda-files
    '("~/projects/wiki/memory/tasks.org" "/Users/spw/projects/wiki/memory.org" "/Users/spw/projects/wiki/wiki.org"))
  '(package-selected-packages
-   '(magit consult lsp-mode ef-themes yasnippet which-key org-modern org-appear nerd-icons-dired jinx gruvbox-theme evil-surround evil-org evil-goggles evil-commentary evil-collection doom-themes doom-modeline corfu cape)))
+   '(magit consult lsp-mode ef-themes which-key org-modern org-appear nerd-icons-dired jinx gruvbox-theme evil-surround evil-org evil-goggles evil-commentary evil-collection doom-themes doom-modeline corfu cape)))
 (put 'dired-find-alternate-file 'disabled nil)
