@@ -483,11 +483,21 @@
   :config
   (evil-set-leader nil (kbd "SPC"))
   ;; global keys
+  (evil-define-key '(normal visual) 'global (kbd "SPC SPC") 'consult-buffer)
   (evil-define-key '(normal visual) 'global (kbd "SPC u") 'universal-argument)
+  (evil-define-key '(normal visual) 'global (kbd "SPC x") 'execute-extended-command)
+  (evil-define-key '(normal visual) 'global (kbd "SPC g") 'magit)
+
+  (evil-define-key '(normal visual) 'global (kbd "SPC b b") 'consult-buffer)
+  (evil-define-key '(normal visual) 'global (kbd "SPC b d") 'kill-this-buffer)
+  (evil-define-key '(normal visual) 'global (kbd "SPC b h") 'bury-buffer)
+
   (evil-define-key '(normal visual) 'global (kbd "g h") 'evil-first-non-blank)
   (evil-define-key '(normal visual) 'global (kbd "g l") 'evil-end-of-line)
   (evil-define-key '(normal visual) 'global (kbd "H") 'previous-buffer)
   (evil-define-key '(normal visual) 'global (kbd "L") 'next-buffer)
+
+  ;; Windows keys
   (evil-define-key '(normal visual) 'global (kbd "SPC w h") 'evil-window-left)
   (evil-define-key '(normal visual) 'global (kbd "SPC w j") 'evil-window-down)
   (evil-define-key '(normal visual) 'global (kbd "SPC w k") 'evil-window-up)
@@ -495,15 +505,20 @@
   (evil-define-key '(normal visual) 'global (kbd "SPC w c") 'evil-window-delete)
   (evil-define-key '(normal visual) 'global (kbd "SPC w v") 'evil-window-vsplit)
   (evil-define-key '(normal visual) 'global (kbd "SPC w s") 'evil-window-split)
+
   ;; file opening keys
   (evil-define-key '(normal visual) 'global (kbd "SPC f s") 'save-buffer)
-  (evil-define-key '(normal visual) 'global (kbd "SPC f f") 'consult-buffer)
+  (evil-define-key '(normal visual) 'global (kbd "SPC f f") 'find-file)
+  (evil-define-key '(normal visual) 'global (kbd "SPC SPC") 'consult-buffer)
+  (evil-define-key '(normal visual) 'global (kbd "SPC f r") 'consult-recent-file)
+
   ;; org-mode keys
   (evil-define-key 'visual org-mode-map (kbd ">>") 'spw-org-shift-right-visual)
   (evil-define-key 'visual org-mode-map (kbd "<<") 'spw-org-shift-left-visual)
   (evil-define-key 'normal org-mode-map (kbd ">>") 'spw-org-shift-right)
   (evil-define-key 'normal org-mode-map (kbd "<<") 'spw-org-shift-left)
   (evil-define-key 'normal org-mode-map (kbd "RET") 'org-open-at-point)
+
   ;; emacs-lisp-mode keys
   (evil-define-key 'normal emacs-lisp-mode-map (kbd "K")
     (lambda ()
@@ -516,6 +531,7 @@
   :after evil
   :ensure t
   :config
+  (setq evil-collection-key-blacklist '("SPC"))
   (evil-collection-init))
 (use-package evil-surround
   :after evil
