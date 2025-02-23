@@ -78,13 +78,13 @@
 ;; Automatically close pairs (like parenthesis)
 (electric-pair-mode)
 
-;; Elpaca Setup
-(defvar elpaca-installer-version 0.8)
+
+(defvar elpaca-installer-version 0.9)
 (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
 (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
 (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
-                              :ref nil :depth 1
+                              :ref nil :depth 1 :inherit ignore
                               :files (:defaults "elpaca-test.el" (:exclude "extensions"))
                               :build (:not elpaca--activate-package)))
 (let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
@@ -118,6 +118,7 @@
 (add-hook 'after-init-hook #'elpaca-process-queues)
 (elpaca `(,@elpaca-order))
 
+
 ;; Install use-package support
 (elpaca elpaca-use-package
   ;; Enable use-package :ensure support for Elpaca.
@@ -137,6 +138,19 @@
 
 (use-package nyan-mode :ensure t :config (nyan-mode))
 
+(use-package dired
+  :ensure nil
+  :bind (:map dired-mode-map ("-" . dired-up-directory))
+  :hook (dired-mode . dired-hide-details-mode)
+  :config
+  (when (eq system-type 'darwin)
+    (setq dired-listing-switches "-lAhv --group-directories-first"
+	  insert-directory-program "/opt/homebrew/bin/gls"
+	  dired-use-ls-dired t))
+  (setq dired-kill-when-opening-new-dired-buffer t
+        dired-dwim-target t
+        dired-hide-details-hide-symlink-targets nil))
+
 (use-package nerd-icons-dired
   :ensure t
   :hook
@@ -147,18 +161,60 @@
   :config
   (diredfl-global-mode))
 
-(use-package yasnippet
+;; (use-package yasnippet
+;;   :ensure t
+;;   :config
+;;   (setq yas-snippet-dirs (append yas-snippet-dirs '("~/.yasnippet")))
+;;   (yas-global-mode 1))
+;; (use-package yasnippet-snippets
+;;   :ensure t)
+;; (use-package yasnippet-capf
+;;   :ensure t
+;;   :after cape
+;;   :config
+;;   (add-to-list 'completion-at-point-functions #'yasnippet-capf))
+
+;; Configure Tempel
+(use-package tempel
   :ensure t
-  :config
-  (setq yas-snippet-dirs (append yas-snippet-dirs '("~/.yasnippet")))
-  (yas-global-mode 1))
-(use-package yasnippet-snippets
-  :ensure t)
-(use-package yasnippet-capf
-  :ensure t
-  :after cape
-  :config
-  (add-to-list 'completion-at-point-functions #'yasnippet-capf))
+  ;; Require trigger prefix before template name when completing.
+  ;; :custom
+  ;; (tempel-trigger-prefix "<")
+
+  :bind (("M-+" . tempel-complete) ;; Alternative tempel-expand
+         ("M-*" . tempel-insert)
+         (:map tempel-map
+               ;; ("<tab>" . tempel-next)
+               ("TAB" . tempel-next)
+               ("<backtab>" . tempel-previous)))
+  :init
+
+  ;; Setup completion at point
+  (defun tempel-setup-capf ()
+    ;; Add the Tempel Capf to `completion-at-point-functions'.
+    ;; `tempel-expand' only triggers on exact matches. Alternatively use
+    ;; `tempel-complete' if you want to see all matches, but then you
+    ;; should also configure `tempel-trigger-prefix', such that Tempel
+    ;; does not trigger too often when you don't expect it. NOTE: We add
+    ;; `tempel-expand' *before* the main programming mode Capf, such
+    ;; that it will be tried first.
+    (setq-local completion-at-point-functions
+                (cons #'tempel-complete
+                      completion-at-point-functions)))
+
+  (add-hook 'conf-mode-hook 'tempel-setup-capf)
+  (add-hook 'prog-mode-hook 'tempel-setup-capf)
+  (add-hook 'text-mode-hook 'tempel-setup-capf)
+
+  ;; Optionally make the Tempel templates available to Abbrev,
+  ;; either locally or globally. `expand-abbrev' is bound to C-x '.
+  ;; (add-hook 'prog-mode-hook #'tempel-abbrev-mode)
+  ;; (global-tempel-abbrev-mode)
+)
+
+;; Optional: Add tempel-collection.
+;; The package is young and doesn't have comprehensive coverage.
+(use-package tempel-collection :ensure t)
 
 ;; Orderless searching for Consult and Corfu
 (use-package orderless
@@ -175,8 +231,8 @@
   (setq corfu-auto-prefix 2)
   :config
   (define-key corfu-map (kbd "S-SPC") 'corfu-insert-separator)
-  (define-key corfu-map (kbd "RET") nil)
-  (define-key corfu-map (kbd "S-<return>") 'corfu-insert)
+  ;; (define-key corfu-map (kbd "RET") nil)
+  ;; (define-key corfu-map (kbd "S-<return>") 'corfu-insert)
   (corfu-history-mode)
   (corfu-popupinfo-mode)
   (global-corfu-mode))
@@ -335,6 +391,41 @@
   ;; (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'consult-narrow-help)
 )
 
+(use-package embark
+  :ensure t
+
+  :bind
+  (("C-." . embark-act)         ;; pick some comfortable binding
+   ("C-;" . embark-dwim)        ;; good alternative: M-.
+   ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
+
+  :init
+
+  ;; Optionally replace the key help with a completing-read interface
+  (setq prefix-help-command #'embark-prefix-help-command)
+
+  ;; Show the Embark target at point via Eldoc. You may adjust the
+  ;; Eldoc strategy, if you want to see the documentation from
+  ;; multiple providers. Beware that using this can be a little
+  ;; jarring since the message shown in the minibuffer can be more
+  ;; than one line, causing the modeline to move up and down:
+
+  ;; (add-hook 'eldoc-documentation-functions #'embark-eldoc-first-target)
+  ;; (setq eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
+
+  :config
+
+  ;; Hide the mode line of the Embark live/completions buffers
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none)))))
+
+;; Consult users will also want the embark-consult package.
+(use-package embark-consult
+  :ensure t ; only need to install it, embark loads it after consult if found
+  :hook
+  (embark-collect-mode . consult-preview-at-point-mode))
 ;; Persist history over Emacs restarts. Vertico sorts by history position.
 (use-package savehist
   :init
@@ -463,18 +554,18 @@
 (use-package org
   :ensure t
   :init
-  (setq org-time-stamp-custom-formats
-      '("<%Y-%m-%d %a %H:%M>" . "<%Y-%m-%d %a %H:%M>"))
-  ;; Indent the content of a heading.
-  ;; (setq org-indent-indentation-per-level 0)
-  ;; (setq org-adapt-indentation nil)
-  (setq org-hide-leading-stars t)
-  (setq org-startup-indented t)
+  (setq org-todo-keywords '((sequence "TODO(t)" "WAIT(w@/@)" "PROG(p)" "NEXT(n!)" "|" "DONE(d!)" "STOP(s@)"))
+	org-todo-keyword-faces '(("WAIT" . "orange") ("PROG" . "yellow") ("NEXT" . "yellow") ("STOP". "grey"))
+	org-startup-indented t
+	org-edit-src-content-indentation 0
+	org-hide-leading-stars t)
+  (customize-set-variable 'org-log-into-drawer t)
   :config
   ;; Follow links to files in the same window.
   (setf (cdr (assoc 'file org-link-frame-setup)) 'find-file)
-  (add-hook 'org-mode-hook (lambda ()
-                             (electric-indent-local-mode -1))))
+  ;; (add-hook 'org-mode-hook (lambda ()
+  ;;                            (electric-indent-local-mode -1))))
+  )
 (use-package org-appear
   :ensure t
   :init
@@ -503,7 +594,7 @@
 	org-journal-file-format "%Y/%m-%b/%d-%a.org"
 	org-journal-date-format "%A, %d %B %Y"
         org-journal-file-type 'daily))
-
+(use-package org-download :ensure t)
 
 ;; Setup spell checking
 (use-package jinx
@@ -545,6 +636,16 @@
 (use-package transient :ensure t)
 (use-package magit :ensure t :after transient)
 
+;; (use-package ultra-scroll
+;;   ;:load-path "~/code/emacs/ultra-scroll" ; if you git clone'd instead of package-vc-install
+;;   :ensure (:host github :repo "jdtsmith/ultra-scroll")
+;;   :init
+;;   (setq scroll-conservatively 101 ; important!
+;;         scroll-margin 0)
+;;   :config
+;;  (ultra-scroll-mode 1))
+
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -566,6 +667,8 @@
  '(custom-safe-themes
    '("f019002925408f081e767c515e4fb4b1d7f1462228d6cd32ff66f06a43671527" "1fefcf9915617538b409d8aba3c6bbefddfcf2a80db09741aeef1457e1809c2b" "40352d95bc42c2e3acb7fc75afb3029d81a76897e14e9438857729cc87630980" "9fba87dbc0f14d5650006893ed53088be71f16d57b749394d9c485ef2326e85f" "79ab8329f4522beaa2285888d38f6204bb60f324912660d774a412a79e336d6c" "9ddb83c12595e789e9abd04a5c0705661748776223a794a6f64669352b956e79" "29a073e66535bad18e11e9bcaa17d7f2d17e4c79f01023e59e9841633915c232" "a087e01778a85f8381b2aa2b7b0832951aea078621b38844b6c8c8d638d73e3b" "97283a649cf1ffd7be84dde08b45a41faa2a77c34a4832d3884c7f7bba53f3f5" "aa04c854054e8d43245bd67ca619a7bede9171e2a2efb1b2c26caf1d031497eb" "d0dc7861b33d68caa92287d39cf8e8d9bc3764ec9c76bdb8072e87d90546c8a3" default))
  '(magit-display-buffer-function 'magit-display-buffer-same-window-except-diff-v1)
+ '(org-agenda-files
+   '("~/projects/wiki/memory/tasks.org" "/Users/spw/projects/wiki/memory.org" "/Users/spw/projects/wiki/wiki.org"))
  '(package-selected-packages
    '(magit consult lsp-mode ef-themes yasnippet which-key org-modern org-appear nerd-icons-dired jinx gruvbox-theme evil-surround evil-org evil-goggles evil-commentary evil-collection doom-themes doom-modeline corfu cape)))
 (put 'dired-find-alternate-file 'disabled nil)
