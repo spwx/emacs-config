@@ -629,7 +629,7 @@
 (use-package rustic
   :ensure t
   :config
-  (setq rustic-format-on-save nil)
+  (setq rustic-format-on-save t)
   (evil-define-key 'normal rustic-mode-map "K" 'lsp-describe-thing-at-point)
   (setq rustic-analyzer-command '("~/.cargo/bin/rust-analyzer"))
   :custom
