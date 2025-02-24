@@ -7,6 +7,9 @@
 ;; Highlight the current line
 (global-hl-line-mode 1)
 
+(which-key-mode 1)
+(define-key which-key-mode-map (kbd "DEL") 'which-key-undo-key)
+
 ;; Convert the selected region from Org to GitHub Flavored Markdown and save it
 ;; to the clipboard
 (defun spw-region-to-gfm-clipboard ()
@@ -78,8 +81,7 @@
 ;; Automatically close pairs (like parenthesis)
 (electric-pair-mode)
 
-
-(defvar elpaca-installer-version 0.9)
+(defvar elpaca-installer-version 0.10)
 (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
 (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
@@ -94,7 +96,7 @@
   (add-to-list 'load-path (if (file-exists-p build) build repo))
   (unless (file-exists-p repo)
     (make-directory repo t)
-    (when (< emacs-major-version 28) (require 'subr-x))
+    (when (<= emacs-major-version 28) (require 'subr-x))
     (condition-case-unless-debug err
         (if-let* ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
                   ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
@@ -123,10 +125,6 @@
 (elpaca elpaca-use-package
   ;; Enable use-package :ensure support for Elpaca.
   (elpaca-use-package-mode))
-
-(use-package which-key
-  :ensure t
-  :config (which-key-mode))
 
 (use-package treesit-auto
   :ensure t
@@ -413,6 +411,7 @@
   :ensure t ; only need to install it, embark loads it after consult if found
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
+
 ;; Persist history over Emacs restarts. Vertico sorts by history position.
 (use-package savehist
   :init
@@ -427,11 +426,6 @@
   :init
   ;; ;; Show the column number in the modeline
   (column-number-mode)
-  ;; Setup date & time display
-  (setopt display-time-default-load-average nil)
-  (setopt display-time-24hr-format t)
-  (setopt display-time-day-and-date t)
-  (display-time)
   ;; Flash the mode line instead of ringing the system bell
   (defun flash-mode-line ()
     (invert-face 'mode-line)
@@ -646,6 +640,41 @@
         scroll-margin 0)
   :config
  (ultra-scroll-mode 1))
+
+(use-package eat :ensure t)
+
+(use-package scroll-on-jump
+  :ensure t
+  :after evil
+  :config
+  (setq scroll-on-jump-duration 0.5)
+(with-eval-after-load 'evil
+  (scroll-on-jump-advice-add evil-undo)
+  (scroll-on-jump-advice-add evil-redo)
+  (scroll-on-jump-advice-add evil-jump-item)
+  (scroll-on-jump-advice-add evil-jump-forward)
+  (scroll-on-jump-advice-add evil-jump-backward)
+  (scroll-on-jump-advice-add evil-ex-search-next)
+  (scroll-on-jump-advice-add evil-ex-search-previous)
+  (scroll-on-jump-advice-add evil-forward-paragraph)
+  (scroll-on-jump-advice-add evil-backward-paragraph)
+  (scroll-on-jump-advice-add evil-goto-mark)
+
+  ;; Actions that themselves scroll.
+  (scroll-on-jump-with-scroll-advice-add evil-goto-line)
+  (scroll-on-jump-with-scroll-advice-add evil-scroll-down)
+  (scroll-on-jump-with-scroll-advice-add evil-scroll-up)
+  (scroll-on-jump-with-scroll-advice-add evil-scroll-line-to-center)
+  (scroll-on-jump-with-scroll-advice-add evil-scroll-line-to-top)
+  (scroll-on-jump-with-scroll-advice-add evil-scroll-line-to-bottom))
+
+(with-eval-after-load 'goto-chg
+  (scroll-on-jump-advice-add goto-last-change)
+  (scroll-on-jump-advice-add goto-last-change-reverse))
+
+(global-set-key (kbd "<C-M-next>") (scroll-on-jump-interactive 'diff-hl-next-hunk))
+(global-set-key (kbd "<C-M-prior>") (scroll-on-jump-interactive 'diff-hl-previous-hunk))
+)
 
 
 (custom-set-faces
