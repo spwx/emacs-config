@@ -482,7 +482,7 @@
   (evil-define-key '(normal visual) 'global (kbd "SPC g") 'magit)
 
   (evil-define-key '(normal visual) 'global (kbd "SPC b b") 'consult-buffer)
-  (evil-define-key '(normal visual) 'global (kbd "SPC b d") 'kill-this-buffer)
+  (evil-define-key '(normal visual) 'global (kbd "SPC b d") 'kill-current-buffer)
   (evil-define-key '(normal visual) 'global (kbd "SPC b h") 'bury-buffer)
 
   (evil-define-key '(normal visual) 'global (kbd "g h") 'evil-first-non-blank)
