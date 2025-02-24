@@ -8,7 +8,6 @@
 (global-hl-line-mode 1)
 
 (which-key-mode 1)
-(define-key which-key-mode-map (kbd "DEL") 'which-key-undo-key)
 
 ;; Convert the selected region from Org to GitHub Flavored Markdown and save it
 ;; to the clipboard
