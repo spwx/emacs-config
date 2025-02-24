@@ -553,6 +553,7 @@
   (setq org-todo-keywords '((sequence "TODO(t)" "WAIT(w@/@)" "PROG(p)" "NEXT(n!)" "|" "DONE(d!)" "STOP(s@)"))
 	org-todo-keyword-faces '(("WAIT" . "orange") ("PROG" . "yellow") ("NEXT" . "yellow") ("STOP". "grey"))
 	org-startup-indented t
+	org-startup-folded t
 	org-edit-src-content-indentation 0
 	org-hide-leading-stars t)
   (customize-set-variable 'org-log-into-drawer t)
