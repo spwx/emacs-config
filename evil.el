@@ -13,33 +13,31 @@
   (evil-mode 1)
   (evil-set-initial-state 'org-agenda-mode 'normal))
 
-;; Evil Collection
+;; Evil everywhere
 (use-package evil-collection
   :after evil
-  :init
-  ;; put this *before* (evil-collection-init)
-  (setopt evil-collection-key-blacklist '("SPC"))
-  :config
-  (evil-collection-init))
+  :config (evil-collection-init))
 
-(use-package evil-goggles
-  :ensure t
-  :config
-  (evil-goggles-mode)
-  (evil-goggles-use-diff-faces))
-
-(use-package evil-terminal-cursor-changer
-  :if (not (display-graphic-p))
-  :config
-  (evil-terminal-cursor-changer-activate)) ; or (etcc-on)
-
-;; Setup key binds
+;; Comments
 (use-package evil-nerd-commenter
   :after evil
   :config
   (define-key evil-normal-state-map (kbd "gcc") 'evilnc-comment-or-uncomment-lines)
   (define-key evil-visual-state-map (kbd "gc") 'evilnc-comment-or-uncomment-lines))
 
+;; Surround
+(use-package evil-surround
+  :config
+  (global-evil-surround-mode 1))
+
+;; Highlight yank & paste
+(use-package evil-goggles
+  :ensure t
+  :config
+  (evil-goggles-mode)
+  (evil-goggles-use-diff-faces))
+
+;; Setup key mappings
 (use-package general
   :config
 
