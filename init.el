@@ -4,7 +4,7 @@
 
 (when (display-graphic-p)
   (add-to-list 'default-frame-alist
-               '(font . "VictorMono Nerd Font-16")))
+               '(font . "VictorMono Nerd Font-18")))
 
 (setopt which-key-add-column-padding 4) ; or any larger number
 
@@ -70,20 +70,31 @@
   :custom
   (org-link-frame-setup '((file . find-file))) ;; open links in the current window
   ;; (org-agenda-files (directory-files-recursively "~/org" "\\.org$"))
-  (org-agenda-files '("~/org/2025/07-July/00-july-tasks.org"))
+  (org-agenda-files '("~/org/logs/25/07-Jul/00-jul_misc_tasks.org"))
   (org-startup-folded 'overview)
   (org-todo-keywords '((sequence "TODO(t)" "WAIT(w)" "|" "STOP(s)" "DONE(d)")))
   (org-todo-keyword-faces '(("WAIT" . "orange")
           ("STOP" . (:foreground "dimgray" :strike-through t))))
   :config
+  ;; Make Org Pretty
   (add-hook 'org-mode-hook #'org-indent-mode))
 
 ;; Pretty bullets in Org
 (use-package org-bullets
-  :ensure t
   :mode ("\\.org\\'" . org-mode)
   :hook (org-mode . org-bullets-mode))
 
+;; (use-package org-appear
+;;   :vc (:url "https://github.com/awth13/org-appear.git"))
+  (use-package org-appear
+    :after org
+    :custom
+    (org-appear-autolinks t)
+    (org-appear-autokeywords t)
+    (org-appear-autoemphasis t)
+    (org-appear-autoentities t)
+    :hook
+    (org-mode . org-appear-mode))
 
 ;;
 ;; Minibuffer config
@@ -161,6 +172,12 @@
   :hook (emacs-startup . global-jinx-mode))
 
 (use-package tempel
+  :bind (("M-*" . tempel-complete)
+       ("M-+" . tempel-insert)
+       (:map tempel-map
+             ("<tab>" . tempel-next)
+             ("TAB" . tempel-next)
+             ("<backtab>" . tempel-previous)))
   :init
   ;; Setup completion at point
   (defun tempel-setup-capf ()
@@ -186,7 +203,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages nil))
+ '(package-selected-packages nil)
+ '(package-vc-selected-packages))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
