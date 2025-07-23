@@ -194,30 +194,17 @@
    "C-S-k" #'org-calendar-backward-year)
   )
 
-(defun my/describe-symbol-at-point ()
-  "Show help for the symbol under the cursor and switch to the help window."
-  (interactive)
-  (let ((sym (symbol-at-point)))
-    (when sym
-      (describe-symbol sym)
-      (let ((help-window (get-buffer-window "*Help*")))
-        (when help-window
-          (select-window help-window))))))
-
 ;; Shift-K in text/org modes
 (evil-define-key 'normal text-mode-map (kbd "K") #'dictionary-lookup-definition)
 (evil-define-key 'normal outline-mode-map (kbd "K") #'dictionary-lookup-definition)
 
 ;; Shift-K in Elisp mode
 (defun my/describe-symbol-at-point ()
-  "Show help for the symbol under the cursor and switch to the help window."
+  "Show help for the symbol under the cursor"
   (interactive)
   (let ((sym (symbol-at-point)))
     (when sym
-      (describe-symbol sym)
-      (let ((help-window (get-buffer-window "*Help*")))
-        (when help-window
-          (select-window help-window))))))
+      (describe-symbol sym))))
 (evil-define-key 'normal emacs-lisp-mode-map (kbd "K") #'my/describe-symbol-at-point)
 
 ;; Make <escape> abort like C-g in the minibuffer (Emacs 28+)

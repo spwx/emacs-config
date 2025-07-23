@@ -9,6 +9,8 @@
 (setopt which-key-add-column-padding 4) ; or any larger number
 
 (which-key-mode)
+;; Jump to a help window when one is opened
+(setopt help-window-select t)
 
 (setopt ring-bell-function 'ignore)
 
