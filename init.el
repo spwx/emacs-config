@@ -2,21 +2,33 @@
 ;; General Setting
 ;;
 
+;; Set font
 (when (display-graphic-p)
   (add-to-list 'default-frame-alist
                '(font . "VictorMono Nerd Font-18")))
 
-(setopt which-key-add-column-padding 4) ; or any larger number
-
-(which-key-mode)
 ;; Jump to a help window when one is opened
 (setopt help-window-select t)
 
+;; Turn off the bell
 (setopt ring-bell-function 'ignore)
+
+;; Automatically reread from disk if the underlying file changes
+(setopt auto-revert-avoid-polling t)
+(setopt auto-revert-interval 5)
+(setopt auto-revert-check-vc-info t)
+(global-auto-revert-mode)
+
+;; Save history of minibuffer
+(savehist-mode)
 
 ;; Store recently opened files
 (recentf-mode 1)
 (setopt recentf-max-menu-items 25)
+
+;; Make right-click do something sensible
+(when (display-graphic-p)
+  (context-menu-mode))
 
 ;; Don't create annoying files
 (setopt make-backup-files nil) ;; Disable backup~ files
@@ -59,11 +71,17 @@
 ;; Enable evil
 (load-file (expand-file-name "evil.el" user-emacs-directory))
 
+;; Key mapping hints
+(use-package which-key
+  :custom (which-key-add-column-padding 4) ; or any larger number
+  :init (which-key-mode)
+
 ;; Theme
 (use-package ef-themes
   :config
   (load-theme 'ef-maris-dark t))
 
+;; Modeline
 (use-package doom-modeline
   :custom (column-number-mode t)
   :init (doom-modeline-mode 1))
@@ -74,6 +92,8 @@
   :hook ((prog-mode . rainbow-delimiters-mode)
          (text-mode . rainbow-delimiters-mode)
          (conf-mode . rainbow-delimiters-mode)))
+
+
 (use-package org
   :custom
   (org-link-frame-setup '((file . find-file))) ;; open links in the current window
