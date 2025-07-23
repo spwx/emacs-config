@@ -133,6 +133,7 @@
     "oi"  '(:ignore t :wk "Insert")
     "oit" '(org-insert-structure-template :wk "Insert template")
     "oi." '(org-timestamp :wk "Timestamp")
+    "oii" '(org-download-clipboard :wk "Image from Clipboard")
     "oid" '(org-deadline :wk "Deadline")
     "ois" '(org-schedule :wk "Schedule")
     "oil" '(org-insert-link :wk "Insert link")

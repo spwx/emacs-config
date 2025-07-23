@@ -84,17 +84,20 @@
   :mode ("\\.org\\'" . org-mode)
   :hook (org-mode . org-bullets-mode))
 
-;; (use-package org-appear
-;;   :vc (:url "https://github.com/awth13/org-appear.git"))
-  (use-package org-appear
-    :after org
-    :custom
-    (org-appear-autolinks t)
-    (org-appear-autokeywords t)
-    (org-appear-autoemphasis t)
-    (org-appear-autoentities t)
-    :hook
-    (org-mode . org-appear-mode))
+(use-package org-appear
+  :after org
+  :custom
+  (org-appear-autolinks t)
+  (org-appear-autokeywords t)
+  (org-appear-autoemphasis t)
+  (org-appear-autoentities t)
+  :hook
+  (org-mode . org-appear-mode))
+
+(use-package org-download
+  :config
+  (add-hook 'dired-mode-hook 'org-download-enable))
+
 
 ;;
 ;; Minibuffer config
@@ -204,7 +207,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages nil)
- '(package-vc-selected-packages))
+ '(package-vc-selected-packages nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
