@@ -68,6 +68,12 @@
   :custom (column-number-mode t)
   :init (doom-modeline-mode 1))
 
+;; Colorful delimeters
+(use-package rainbow-delimiters
+  :ensure t
+  :hook ((prog-mode . rainbow-delimiters-mode)
+         (text-mode . rainbow-delimiters-mode)
+         (conf-mode . rainbow-delimiters-mode)))
 (use-package org
   :custom
   (org-link-frame-setup '((file . find-file))) ;; open links in the current window
