@@ -74,7 +74,7 @@
 ;; Key mapping hints
 (use-package which-key
   :custom (which-key-add-column-padding 4) ; or any larger number
-  :init (which-key-mode)
+  :init (which-key-mode))
 
 ;; Theme
 (use-package ef-themes
