@@ -19,9 +19,6 @@
 (setopt auto-revert-check-vc-info t)
 (global-auto-revert-mode)
 
-;; Save history of minibuffer
-(savehist-mode)
-
 ;; Store recently opened files
 (recentf-mode 1)
 (setopt recentf-max-menu-items 25)
@@ -35,46 +32,17 @@
 (setopt auto-save-default nil) ;; Disable #autosave# files
 (setopt create-lockfiles nil) ;; Disable .#lockfile
 
-;; Make the window separator prettier in the terminal
-(unless window-system  ; Terminal only
-  (set-display-table-slot standard-display-table
-                          'vertical-border
-                          (make-glyph-code ?│)))
+;; Setup the package manager
+(load-file (expand-file-name "use_package_config.el" user-emacs-directory))
 
+;; Vim keys
+(load-file (expand-file-name "evil_config.el" user-emacs-directory))
 
-;;
-;; Package Manager Configuration
-;;
+;; Org configuration
+(load-file (expand-file-name "org_config.el" user-emacs-directory))
 
-;; Enable package.el and add MELPA
-(require 'package)
-(setopt package-archives '(("melpa" . "https://melpa.org/packages/")
-                         ("gnu"   . "https://elpa.gnu.org/packages/")))
-(package-initialize)
-
-;; Ensure package list is up to date
-(unless package-archive-contents
-  (package-refresh-contents))
-
-;; Use use-package by default
-(eval-when-compile
-  (require 'use-package))
-
-;; Auto install packages
-(setopt use-package-always-ensure t)
-
-
-;;
-;; Additional packages
-;;
-
-;; Enable evil
-(load-file (expand-file-name "evil.el" user-emacs-directory))
-
-;; Key mapping hints
-(use-package which-key
-  :custom (which-key-add-column-padding 4) ; or any larger number
-  :init (which-key-mode))
+;; Autocomplete and Minibuffer configuration
+(load-file (expand-file-name "completions_config.el" user-emacs-directory))
 
 ;; Theme
 (use-package ef-themes
@@ -86,6 +54,11 @@
   :custom (column-number-mode t)
   :init (doom-modeline-mode 1))
 
+;; Key mapping hints
+(use-package which-key
+  :custom (which-key-add-column-padding 4) ; or any larger number
+  :init (which-key-mode))
+
 ;; Colorful delimeters
 (use-package rainbow-delimiters
   :ensure t
@@ -93,122 +66,21 @@
          (text-mode . rainbow-delimiters-mode)
          (conf-mode . rainbow-delimiters-mode)))
 
-
-(use-package org
-  :custom
-  (org-link-frame-setup '((file . find-file))) ;; open links in the current window
-  ;; (org-agenda-files (directory-files-recursively "~/org" "\\.org$"))
-  (org-agenda-files '("~/org/logs/25/07-Jul/00-jul_misc_tasks.org"))
-  (org-startup-folded 'overview)
-  (org-todo-keywords '((sequence "TODO(t)" "WAIT(w)" "|" "STOP(s)" "DONE(d)")))
-  (org-todo-keyword-faces '(("WAIT" . "orange")
-          ("STOP" . (:foreground "dimgray" :strike-through t))))
-  :config
-  ;; Make Org Pretty
-  (add-hook 'org-mode-hook #'org-indent-mode))
-
-;; Pretty bullets in Org
-(use-package org-bullets
-  :mode ("\\.org\\'" . org-mode)
-  :hook (org-mode . org-bullets-mode))
-
-(use-package org-appear
-  :after org
-  :custom
-  (org-appear-autolinks t)
-  (org-appear-autokeywords t)
-  (org-appear-autoemphasis t)
-  (org-appear-autoentities t)
-  :hook
-  (org-mode . org-appear-mode))
-
-(use-package org-download
-  :config
-  (add-hook 'dired-mode-hook 'org-download-enable))
-
-
-;;
-;; Minibuffer config
-;;
-
-;; Fido mode
-(fido-mode 1)
-(fido-vertical-mode 1)
-
-;; Annotations
-;; NOTE: Marginalia must be activated in the :init section
-(use-package marginalia :init (marginalia-mode))
-
-
-;; Icons
-(use-package nerd-icons)
-(use-package nerd-icons-completion
-  :after marginalia
-  :config
-  (nerd-icons-completion-mode)
-  (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
-
-;; Auto-completion
-(use-package corfu
-  :init
-  (global-corfu-mode)
-  :custom
-  (corfu-cycle t)
-  (corfu-auto t)
-  (corfu-auto-delay 0.2)
-  (corfu-auto-prefix 2)
-  :config
-  (corfu-popupinfo-mode))
-
-(use-package nerd-icons-corfu
-  :config
-  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
-
-(use-package emacs
-  :custom
-  ;; Enable indentation+completion using the TAB key.
-  (tab-always-indent 'complete)
-  ;; Disable Ispell completion function.
-  (text-mode-ispell-word-completion nil)
-  ;; Hide commands in M-x which do not apply to the current mode.  Corfu
-  ;; commands are hidden, since they are not used via M-x. This setting is
-  ;; useful beyond Corfu.
-  (read-extended-command-predicate #'command-completion-default-include-p))
-;; Enable Corfu completion UI
-;; See the Corfu README for more configuration tips.
-(use-package corfu
-  :init
-  (global-corfu-mode))
-
-;; Add extensions
-(use-package cape
-  :bind ("C-c p" . cape-prefix-map) ;; Alternative key: M-<tab>, M-p, M-+
-  ;; Alternatively bind Cape commands individually.
-  ;; :bind (("C-c p d" . cape-dabbrev)
-  ;;        ("C-c p h" . cape-history)
-  ;;        ("C-c p f" . cape-file)
-  ;;        ...)
-  :init
-  ;; Add to the global default value of `completion-at-point-functions' which is
-  ;; used by `completion-at-point'.  The order of the functions matters, the
-  ;; first function returning a result wins.  Note that the list of buffer-local
-  ;; completion functions takes precedence over the global list.
-  ;; (add-hook 'completion-at-point-functions #'cape-dabbrev)
-  (add-hook 'completion-at-point-functions #'cape-file)
-  (add-hook 'completion-at-point-functions #'cape-elisp-block)
-  ;; (add-hook 'completion-at-point-functions #'cape-history)
-  ;; ...
-)
+;; Spell checking
 (use-package jinx
-  :hook (emacs-startup . global-jinx-mode))
+  :hook (emacs-startup . global-jinx-mode)
+  :general
+  (:keymaps 'global :states 'normal "z=" #'jinx-correct))
 
+;; Snippets
 (use-package tempel
-  :bind (("M-*" . tempel-complete)
-       ("M-+" . tempel-insert)
-       (:map tempel-map
-             ("<tab>" . tempel-next)
-             ("TAB" . tempel-next)
-             ("<backtab>" . tempel-previous)))
+  :bind 
+    (:map tempel-map
+	    ("<tab>" . tempel-next)
+	    ("TAB" . tempel-next)
+	    ("<backtab>" . tempel-previous))
+  :general
+  (:keymaps 'global :states '(normal visual) "gt" #'tempel-insert)
   :init
   ;; Setup completion at point
   (defun tempel-setup-capf ()
@@ -218,10 +90,9 @@
 
   (add-hook 'conf-mode-hook 'tempel-setup-capf)
   (add-hook 'prog-mode-hook 'tempel-setup-capf)
-  (add-hook 'text-mode-hook 'tempel-setup-capf)
-  :config
-  (evil-define-key 'visual 'global (kbd "gt") #'tempel-insert))
+  (add-hook 'text-mode-hook 'tempel-setup-capf))
 
+;; More Snippets
 (use-package tempel-collection :after tempel)
 
 
