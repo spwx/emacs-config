@@ -59,6 +59,12 @@
   :custom (which-key-add-column-padding 4) ; or any larger number
   :init (which-key-mode))
 
+;; Show number of search results
+(use-package anzu
+  :config (global-anzu-mode +1))
+(use-package evil-anzu
+  :after evil)
+
 ;; Colorful delimeters
 (use-package rainbow-delimiters
   :ensure t
