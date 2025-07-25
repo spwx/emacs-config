@@ -36,16 +36,16 @@
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 ;; Setup the package manager
-(load-file (expand-file-name "use_package_config.el" user-emacs-directory))
+(load-file (expand-file-name "use-package-config.el" user-emacs-directory))
 
 ;; Vim keys
-(load-file (expand-file-name "evil_config.el" user-emacs-directory))
+(load-file (expand-file-name "evil-config.el" user-emacs-directory))
 
 ;; Org configuration
-(load-file (expand-file-name "org_config.el" user-emacs-directory))
+(load-file (expand-file-name "org-config.el" user-emacs-directory))
 
 ;; Autocomplete and Minibuffer configuration
-(load-file (expand-file-name "completions_config.el" user-emacs-directory))
+(load-file (expand-file-name "completions-config.el" user-emacs-directory))
 
 ;; Theme
 (use-package ef-themes

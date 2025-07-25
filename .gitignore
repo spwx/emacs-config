@@ -1,7 +1,7 @@
 *
 !init.el
 !early-init.el
-!evil_config.el
-!use_package_config.el
-!org_config.el
-!completions_config.el
+!evil-config.el
+!use-package-config.el
+!org-config.el
+!completions-config.el
