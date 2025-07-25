@@ -89,7 +89,7 @@
 
 ;; Snippets
 (use-package tempel
-  :bind 
+  :bind
     (:map tempel-map
 	    ("<tab>" . tempel-next)
 	    ("TAB" . tempel-next)
