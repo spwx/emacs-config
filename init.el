@@ -65,6 +65,11 @@
 (use-package evil-anzu
   :after evil)
 
+;; Better navigation
+(use-package avy
+  :general
+  (:keymaps 'global :states 'normal "s" #'avy-goto-char-timer))
+
 ;; Colorful delimeters
 (use-package rainbow-delimiters
   :ensure t
