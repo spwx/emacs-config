@@ -30,6 +30,7 @@
   :config
   (add-hook 'dired-mode-hook 'org-download-enable))
 
+(use-package org-journal)
 
 (use-package org
   :preface
