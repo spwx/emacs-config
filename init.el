@@ -68,7 +68,8 @@
 ;; Better navigation
 (use-package avy
   :general
-  (:keymaps 'global :states 'normal "s" #'avy-goto-char-timer))
+  (:keymaps 'global :states 'normal "s" #'avy-goto-char-timer)
+  (:keymaps 'global :states 'normal "gs" #'avy-resume))
 
 ;; Colorful delimeters
 (use-package rainbow-delimiters
