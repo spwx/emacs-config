@@ -40,8 +40,8 @@
   :custom
   (org-journal-enable-agenda-integration t)
   (org-journal-dir "~/org/logs/")
-  ;; Setting this breaks org-journal-time-format
-  ;; (org-journal-file-format "%Y/%m-%B/%d-%A.org")
+  ;; the name of the actual file must include %Y%m%d
+  (org-journal-file-format "%Y/%m-%B/%Y%m%d.org")
   )
 
 (use-package org

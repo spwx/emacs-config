@@ -122,8 +122,7 @@
  ;; If there is more than one, they won't work right.
  '(org-agenda-files
    '("/Users/spw/org/logs/2025/07-July/00-july_tasks.org"
-     "/Users/spw/org/logs/2025/07-July/25-Friday.org"
-     "/Users/spw/org/logs/20250725") nil nil "Customized with use-package org")
+     "/Users/spw/Documents/org/logs/2025/07-July/20250725.org") nil nil "Customized with use-package org")
  '(package-selected-packages
    '(avy cape consult corfu doom-modeline ef-themes evil-anzu
 	 evil-collection evil-goggles evil-nerd-commenter
