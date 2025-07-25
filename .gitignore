@@ -1,10 +1,7 @@
-auto-save-list/
-elpa/
-eln-cache/
-eshell/
-projects
-recentf
-transient/
-templates
-history
-.org-id-locations
+*
+!init.el
+!early-init.el
+!evil_config.el
+!use_package_config.el
+!org_config.el
+!completions_config.el
