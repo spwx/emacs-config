@@ -62,6 +62,11 @@
   :custom (which-key-add-column-padding 4) ; or any larger number
   :init (which-key-mode))
 
+;; Better undo
+(use-package undo-fu)
+(use-package undo-fu-session
+  :config (undo-fu-session-global-mode))
+
 ;; Show number of search results
 (use-package anzu
   :config (global-anzu-mode +1))

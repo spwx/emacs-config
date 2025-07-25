@@ -8,7 +8,7 @@
   (evil-vsplit-window-right t)
   (evil-split-window-below t)
   (evil-respect-visual-line-mode t)
-  (evil-undo-system 'undo-redo)
+  (evil-undo-system 'undo-fu)
   :config
   (evil-mode 1)
 
