@@ -30,7 +30,19 @@
   :config
   (add-hook 'dired-mode-hook 'org-download-enable))
 
-(use-package org-journal)
+(use-package org-journal
+  :general
+  (my/leader-keys
+    "oj" '(:ignore t :wk "Journal")
+    "ojj" '(org-journal-new-entry :wk "Create entry")
+    "ojp" '(org-journal-previous-entry :wk "Previous entry")
+    "ojn" '(org-journal-next-entry :wk "Next entry"))
+  :custom
+  (org-journal-enable-agenda-integration t)
+  (org-journal-dir "~/org/logs/")
+  ;; Setting this breaks org-journal-time-format
+  ;; (org-journal-file-format "%Y/%m-%B/%d-%A.org")
+  )
 
 (use-package org
   :preface
@@ -42,8 +54,8 @@
     (if (use-region-p)
 	(let ((start (region-beginning))
 	      (end (region-end)))
-	  (shell-command-on-region 
-	   start end 
+	  (shell-command-on-region
+	   start end
 	   "/opt/homebrew/bin/pandoc -f org -t gfm --wrap=none | pbcopy")
 	  (message "Region converted to GFM and copied to clipboard"))
       (message "No region selected")))
@@ -81,8 +93,6 @@
       (evil-shift-left-line 1)))
 
   :general
-;;;;;;;; General keys
-
   ;; Org mode key mappings
   (my/leader-keys
     :keymaps 'org-mode-map
@@ -109,7 +119,7 @@
    :states 'normal
    :keymaps 'org-mode-map
    ">>" #'my/org-smart-demote)
-  
+
   (general-define-key
    :states 'visual
    :keymaps 'org-mode-map
@@ -124,12 +134,12 @@
    :states 'normal
    :keymaps 'org-mode-map
    "<<" #'my/org-smart-promote)
-  
+
   (general-define-key
    :states 'visual
    :keymaps 'org-mode-map
    "<" #'my/org-smart-promote)
-  
+
   (general-define-key
    :states 'normal
    :keymaps 'org-mode-map
