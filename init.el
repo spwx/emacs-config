@@ -32,6 +32,9 @@
 (setopt auto-save-default nil) ;; Disable #autosave# files
 (setopt create-lockfiles nil) ;; Disable .#lockfile
 
+;; Delete trailing whitespace when saving a file
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+
 ;; Setup the package manager
 (load-file (expand-file-name "use_package_config.el" user-emacs-directory))
 
