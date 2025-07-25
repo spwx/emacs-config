@@ -7,8 +7,9 @@
   (org-todo-keyword-faces '(("WAIT" . "orange")
           ("STOP" . (:foreground "dimgray" :strike-through t))))
   :config
+  ;; evil-collection's org-agenda bindings are set for motion mode
+  (evil-set-initial-state 'org-agenda-mode 'motion)
   ;; Make Org Pretty
-  (evil-set-initial-state 'org-agenda-mode 'normal)
   (add-hook 'org-mode-hook #'org-indent-mode))
 
 ;; Pretty bullets in Org
