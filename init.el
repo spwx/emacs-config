@@ -128,13 +128,7 @@
  '(org-agenda-files
    '("/Users/spw/org/logs/2025/07-July/00-july_tasks.org"
      "/Users/spw/Documents/org/logs/2025/07-July/20250725.org") nil nil "Customized with use-package org")
- '(package-selected-packages
-   '(avy cape consult corfu doom-modeline ef-themes evil-anzu
-	 evil-collection evil-goggles evil-nerd-commenter
-	 evil-surround general jinx marginalia nerd-icons-completion
-	 nerd-icons-corfu orderless org-appear org-bullets
-	 org-download org-journal rainbow-delimiters tempel-collection
-	 vertico))
+ '(package-selected-packages nil)
  '(package-vc-selected-packages nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
