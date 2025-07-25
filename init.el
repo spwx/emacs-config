@@ -120,7 +120,17 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages nil)
+ '(org-agenda-files
+   '("/Users/spw/org/logs/2025/07-July/00-july_tasks.org"
+     "/Users/spw/org/logs/2025/07-July/25-Friday.org"
+     "/Users/spw/org/logs/20250725") nil nil "Customized with use-package org")
+ '(package-selected-packages
+   '(avy cape consult corfu doom-modeline ef-themes evil-anzu
+	 evil-collection evil-goggles evil-nerd-commenter
+	 evil-surround general jinx marginalia nerd-icons-completion
+	 nerd-icons-corfu orderless org-appear org-bullets
+	 org-download org-journal rainbow-delimiters tempel-collection
+	 vertico))
  '(package-vc-selected-packages nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
