@@ -95,6 +95,12 @@
   :general
   ;; Org mode key mappings
   (my/leader-keys
+    :keymaps 'global
+    :states '(normal visual)
+    "o"  '(:ignore t :wk "Org")
+    "oa" '(org-agenda :wk "Agenda")
+    "oc" '(org-capture :wk "Capture"))
+  (my/leader-keys
     :keymaps 'org-mode-map
     :states '(normal)
     "oe" '(org-export-dispatch :wk "Export")

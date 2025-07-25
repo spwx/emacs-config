@@ -73,9 +73,6 @@
     "ho" '(describe-symbol :wk "Help")
     "hk" '(describe-key :wk "Help")
     "hm" '(describe-mode :wk "Help")
-    "o"  '(:ignore t :wk "Org")
-    "oa" '(org-agenda :wk "Agenda")
-    "oc" '(org-capture :wk "Capture")
     ))
 
 ;; Shift-K in Elisp mode
