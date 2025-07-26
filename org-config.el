@@ -35,15 +35,19 @@
   :general
   (my/leader-keys
     "oj" '(:ignore t :wk "Journal")
-    "ojj" '(org-journal-new-entry :wk "Create entry")
+    "ojt" '(org-journal-open-current-journal-file :wk "Create entry")
+    "ojj" '(org-journal-new-entry :wk "Create entry"))
+  (my/leader-keys
+    :keymaps 'org-journal-mode-map
     "ojp" '(org-journal-previous-entry :wk "Previous entry")
     "ojn" '(org-journal-next-entry :wk "Next entry"))
   :custom
+  ;; Fullscreen journal window
+  (org-journal-find-file-fn 'find-file)
   (org-journal-enable-agenda-integration t)
   (org-journal-dir "~/org/logs/")
-  ;; the name of the actual file must include %Y%m%d
-  (org-journal-file-format "%Y/%m-%B/%Y%m%d.org")
-  )
+  ;; the name of the actual file must include %Y%m%d !!!
+  (org-journal-file-format "%Y/%m-%B/%Y%m%d.org"))
 
 (use-package org
   :preface
