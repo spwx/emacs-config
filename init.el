@@ -32,6 +32,9 @@
 (setopt auto-save-default nil) ;; Disable #autosave# files
 (setopt create-lockfiles nil) ;; Disable .#lockfile
 
+;; Remember were you last were in a file
+(save-place-mode 1)
+
 ;; Delete trailing whitespace when saving a file
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
