@@ -1,3 +1,6 @@
+;; auto-insert line breaks
+(add-hook 'text-mode-hook #'auto-fill-mode)
+
 (use-package org
   :custom
   (org-link-frame-setup '((file . find-file))) ;; open links in the current window
