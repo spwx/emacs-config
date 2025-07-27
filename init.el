@@ -144,6 +144,8 @@
     "g" '(:ignore t :wk "Git")
     "gg" '(magit :wk "Magit!"))
   :custom
+  (magit-display-buffer-function 'magit-display-buffer-fullframe-status-v1)
+  (magit-bury-buffer-function 'magit-restore-window-configuration)
   (magit-format-file-function #'magit-format-file-nerd-icons)) ;; Turns on magit nerd-icons
 
 (use-package treesit-auto
