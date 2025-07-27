@@ -122,6 +122,70 @@
 (use-package tempel-collection :after tempel)
 
 
+(use-package diff-hl
+  :ensure t
+  :init
+  ;; Enable globally and set up a thin outside fringe
+  (global-diff-hl-mode)
+  (when (fboundp 'fringe-mode) (fringe-mode 8))
+  (setq-default fringes-outside-margins t)
+
+  :config
+  ;;–– Pretty half-width bitmaps ––;;
+  (defun my/pretty-diff-hl-bitmaps (&rest _)
+    "Redefine diff-hl bitmaps to sleek half-width bars."
+    (let* ((scale (if (and (boundp 'text-scale-mode-amount)
+                           (numberp text-scale-mode-amount))
+                      (expt text-scale-mode-step text-scale-mode-amount)
+                    1))
+           (spacing (or (and (display-graphic-p)
+                             (default-value 'line-spacing))
+                        0))
+           (h (+ (ceiling (* (frame-char-height) scale))
+                 (if (floatp spacing)
+                     (truncate (* (frame-char-height) spacing))
+                   spacing)))
+           (w (or (and (integerp diff-hl-bmp-max-width)
+                       (min (frame-parameter nil
+                                            (intern (format "%s-fringe" diff-hl-side)))
+                            diff-hl-bmp-max-width))
+                  diff-hl-bmp-max-width))
+           (bits
+            (make-vector
+             h
+             (string-to-number
+              (let ((half (1- (/ w 2))))
+                (concat (make-string half ?1)
+                        (make-string (- w half) ?0)))
+              2))))
+      (define-fringe-bitmap 'diff-hl-bmp-middle bits nil nil 'center)))
+
+  (advice-add #'diff-hl-define-bitmaps :after #'my/pretty-diff-hl-bitmaps)
+
+  ;; Use our middle-bar for inserts/changes; leave delete as-is
+  (defun my/vc-gutter-bmp-fn (type _pos)
+    (if (eq type 'delete)
+        'diff-hl-bmp-delete
+      'diff-hl-bmp-middle))
+  (setq diff-hl-fringe-bmp-function #'my/vc-gutter-bmp-fn
+        diff-hl-draw-borders         nil)
+
+  ;; Color the bars and keep backgrounds transparent
+  (set-face-attribute 'diff-hl-insert nil  :foreground "green"  :background nil)
+  (set-face-attribute 'diff-hl-change nil  :foreground "yellow" :background nil)
+  (set-face-attribute 'diff-hl-delete nil  :foreground "red"    :background nil)
+  (add-hook 'diff-hl-mode-hook
+            (lambda ()
+              (dolist (face '(diff-hl-insert diff-hl-change diff-hl-delete))
+                (set-face-background face nil))))
+
+  ;; Push Flycheck to the right fringe so it never overlaps
+  (with-eval-after-load 'flycheck
+    (setq flycheck-indication-mode 'right-fringe)
+    (define-fringe-bitmap 'flycheck-fringe-bitmap-double-arrow
+      [16 48 112 240 112 48 16] nil nil 'center)))
+
+
 ;;
 ;; Custom Variable Configuration
 ;;
@@ -133,7 +197,7 @@
  ;; If there is more than one, they won't work right.
  '(org-agenda-files
    '("/Users/spw/org/logs/2025/07-July/00-july_tasks.org"
-     "/Users/spw/Documents/org/logs/2025/07-July/20250725.org") nil nil "Customized with use-package org")
+     "/Users/spw/Documents/org/logs/2025/07-July/20250726.org") nil nil "Customized with use-package org")
  '(package-selected-packages nil)
  '(package-vc-selected-packages nil))
 (custom-set-faces
