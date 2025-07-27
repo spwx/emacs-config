@@ -153,9 +153,6 @@
   (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode t))
 
-
-;;
-;; Custom Variable Configuration
-;;
+;; Put customized variable into a separate file
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file 'noerror)
