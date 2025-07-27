@@ -50,7 +50,10 @@
   (org-journal-enable-agenda-integration t)
   (org-journal-dir "~/org/logs/")
   ;; the name of the actual file must include %Y%m%d !!!
-  (org-journal-file-format "%Y/%m-%B/%Y%m%d.org"))
+  (org-journal-file-format "%Y/%m-%B/%Y%m%d.org")
+  (org-journal-file-header
+   (concat "#+title: " (format-time-string "%Y-%m-%d") "\n"
+	   "#+author: spw\n\n")))
 
 (use-package org
   :preface
