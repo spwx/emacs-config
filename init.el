@@ -138,6 +138,14 @@
   :custom
   (diff-hl-show-staged-changes nil))
 
+(use-package magit
+  :general
+  (my/leader-keys
+    "g" '(:ignore t :wk "Git")
+    "gg" '(magit :wk "Magit!"))
+  :custom
+  (magit-format-file-function #'magit-format-file-nerd-icons)) ;; Turns on magit nerd-icons
+
 (use-package treesit-auto
   :custom
   (treesit-auto-install 'prompt)
