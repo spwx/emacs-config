@@ -13,6 +13,9 @@
 ;; Turn off the bell
 (setopt ring-bell-function 'ignore)
 
+;; Highlight the current line
+(global-hl-line-mode)
+
 ;; Automatically reread from disk if the underlying file changes
 (setopt auto-revert-avoid-polling t)
 (setopt auto-revert-interval 5)
