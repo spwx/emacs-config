@@ -30,27 +30,8 @@
   (help-window-select t)                          ;; Jump to a help window when one is opened
 
   :config
-  ;; By default emacs gives you access to a lot of *special* buffers, while navigating with [b and ]b,
-  ;; this might be confusing for newcomers. This settings make sure ]b and [b will always load a
-  ;; file buffer. To see all buffers use <leader> SPC, <leader> b l, or <leader> b i.
-  (defun skip-these-buffers (_window buffer _bury-or-kill)
-    "Function for `switch-to-prev-buffer-skip'."
-    (string-match "\\*[^*]+\\*" (buffer-name buffer)))
-  (setq switch-to-prev-buffer-skip 'skip-these-buffers)
-
-
-  ;; Configure font settings based on the operating system.
-  ;; Ok, this kickstart is meant to be used on the terminal, not on GUI.
-  ;; But without this, I fear you could start Graphical Emacs and be sad :(
-  (set-face-attribute 'default nil :family "JetBrainsMono Nerd Font"  :height 100)
-  (when (eq system-type 'darwin)       ;; Check if the system is macOS.
-    (setq mac-command-modifier 'meta)  ;; Set the Command key to act as the Meta key.
-    (set-face-attribute 'default nil :family "JetBrainsMono Nerd Font" :height 130))
 
   ;; Save manual customizations to a separate file instead of cluttering `init.el'.
-  ;; You can M-x customize, M-x customize-group, or M-x customize-themes, etc.
-  ;; The saves you do manually using the Emacs interface would overwrite this file.
-  ;; The following makes sure those customizations are in a separate file.
   (setq custom-file (locate-user-emacs-file "custom-vars.el")) ;; Specify the custom file path.
   (load custom-file 'noerror 'nomessage)                       ;; Load the custom file quietly, ignoring errors.
 
