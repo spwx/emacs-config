@@ -133,7 +133,9 @@
     "gr" '(diff-hl-revert-hunk :wk "Revert hunk")
     "gu" '(diff-hl-unstage-file :wk "Unstage all"))
   :init
+  ;; Activate diff-hl-mode
   (global-diff-hl-mode)
+  ;; Update gutters on the fly
   (diff-hl-flydiff-mode)
   :custom
   (diff-hl-show-staged-changes nil))
@@ -144,9 +146,11 @@
     "g" '(:ignore t :wk "Git")
     "gg" '(magit :wk "Magit!"))
   :custom
+  ;; Make Magit full screen
   (magit-display-buffer-function 'magit-display-buffer-fullframe-status-v1)
   (magit-bury-buffer-function 'magit-restore-window-configuration)
-  (magit-format-file-function #'magit-format-file-nerd-icons)) ;; Turns on magit nerd-icons
+  ;; Turns on magit nerd-icons
+  (magit-format-file-function #'magit-format-file-nerd-icons))
 
 (use-package treesit-auto
   :custom
