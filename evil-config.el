@@ -4,6 +4,7 @@
   (evil-want-keybinding nil)
   (evil-want-C-i-jump nil)
   (evil-want-C-u-scroll t)
+  (evil-want-C-u-delete t)
   (evil-want-Y-yank-to-eol t)
   (evil-vsplit-window-right t)
   (evil-split-window-below t)
