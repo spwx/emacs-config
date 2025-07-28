@@ -7,58 +7,28 @@
   (add-to-list 'default-frame-alist
                '(font . "VictorMono Nerd Font-18")))
 
-;; Jump to a help window when one is opened
-(setopt help-window-select t)
-
-;; Turn off the bell
-(setopt ring-bell-function 'ignore)
-
-;; Highlight the current line
-(global-hl-line-mode)
-
-;; Automatically reread from disk if the underlying file changes
-(setopt auto-revert-avoid-polling t)
-(setopt auto-revert-interval 5)
-(setopt auto-revert-check-vc-info t)
-(global-auto-revert-mode)
-
-;; Store recently opened files
-(recentf-mode 1)
-(setopt recentf-max-menu-items 25)
-
-;; Make right-click do something sensible
-(when (display-graphic-p)
-  (context-menu-mode))
-
-;; Don't create annoying files
-(setopt make-backup-files nil) ;; Disable backup~ files
-(setopt auto-save-default nil) ;; Disable #autosave# files
-(setopt create-lockfiles nil) ;; Disable .#lockfile
-
-;; Remember were you last were in a file
-(save-place-mode 1)
-
-;; Delete trailing whitespace when saving a file
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
-
+;; ***This must come first!***
 ;; Setup the package manager
 (load-file (expand-file-name "use-package-config.el" user-emacs-directory))
 
-;; Vim keys
+;; Setup built-in Emacs features
+(load-file (expand-file-name "emacs-config.el" user-emacs-directory))
+
+;; Evil (Vim) Key Mapping Configuration
 (load-file (expand-file-name "evil-config.el" user-emacs-directory))
 
-;; Org configuration
+;; Org Configuration
 (load-file (expand-file-name "org-config.el" user-emacs-directory))
 
-;; Autocomplete and Minibuffer configuration
+;; Auto-complete And Mini-buffer Configuration
 (load-file (expand-file-name "completions-config.el" user-emacs-directory))
 
-;; Theme
+;; Set The Theme
 (use-package ef-themes
   :config
   (load-theme 'ef-maris-dark t))
 
-;; Modeline
+;; Doom Modeline
 (use-package doom-modeline
   :custom (column-number-mode t)
   :init (doom-modeline-mode 1))
@@ -79,13 +49,13 @@
 (use-package evil-anzu
   :after evil)
 
-;; Better navigation
+;; Ninja like navigation
 (use-package avy
   :general
   (:keymaps 'global :states 'normal "s" #'avy-goto-char-timer)
   (:keymaps 'global :states 'normal "gs" #'avy-resume))
 
-;; Colorful delimeters
+;; Colorful delimiters
 (use-package rainbow-delimiters
   :ensure t
   :hook ((prog-mode . rainbow-delimiters-mode)
@@ -121,7 +91,7 @@
 ;; More Snippets
 (use-package tempel-collection :after tempel)
 
-;; Used AI to convert from doomemacs to whatever this is
+;; Git gutters
 (use-package diff-hl
   :general
   (my/leader-keys
@@ -140,6 +110,7 @@
   :custom
   (diff-hl-show-staged-changes nil))
 
+;; Magit!
 (use-package magit
   :general
   (my/leader-keys
@@ -152,13 +123,10 @@
   ;; Turns on magit nerd-icons
   (magit-format-file-function #'magit-format-file-nerd-icons))
 
+;; Auto-install Treesitter grammars
 (use-package treesit-auto
   :custom
   (treesit-auto-install 'prompt)
   :config
   (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode t))
-
-;; Put customized variable into a separate file
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-(load custom-file 'noerror)
