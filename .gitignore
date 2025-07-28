@@ -5,3 +5,4 @@
 !use-package-config.el
 !org-config.el
 !completions-config.el
+!emacs-config.el

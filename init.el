@@ -7,28 +7,28 @@
   (add-to-list 'default-frame-alist
                '(font . "VictorMono Nerd Font-18")))
 
-;; ***This must come first!***
+;; *** THIS MUST COME FIRST ***
 ;; Setup the package manager
 (load-file (expand-file-name "use-package-config.el" user-emacs-directory))
 
-;; Setup built-in Emacs features
+;; Emacs built-ins configuration
 (load-file (expand-file-name "emacs-config.el" user-emacs-directory))
 
-;; Evil (Vim) Key Mapping Configuration
+;; Vim key mappings configuration
 (load-file (expand-file-name "evil-config.el" user-emacs-directory))
 
-;; Org Configuration
+;; Org configuration
 (load-file (expand-file-name "org-config.el" user-emacs-directory))
 
-;; Auto-complete And Mini-buffer Configuration
+;; Autocomplete and Minibuffer configuration
 (load-file (expand-file-name "completions-config.el" user-emacs-directory))
 
-;; Set The Theme
+;; Theme
 (use-package ef-themes
   :config
   (load-theme 'ef-maris-dark t))
 
-;; Doom Modeline
+;; Modeline
 (use-package doom-modeline
   :custom (column-number-mode t)
   :init (doom-modeline-mode 1))
@@ -49,13 +49,13 @@
 (use-package evil-anzu
   :after evil)
 
-;; Ninja like navigation
+;; Better navigation
 (use-package avy
   :general
   (:keymaps 'global :states 'normal "s" #'avy-goto-char-timer)
   (:keymaps 'global :states 'normal "gs" #'avy-resume))
 
-;; Colorful delimiters
+;; Colorful delimeters
 (use-package rainbow-delimiters
   :ensure t
   :hook ((prog-mode . rainbow-delimiters-mode)
@@ -123,7 +123,7 @@
   ;; Turns on magit nerd-icons
   (magit-format-file-function #'magit-format-file-nerd-icons))
 
-;; Auto-install Treesitter grammars
+;; Setup treesitter
 (use-package treesit-auto
   :custom
   (treesit-auto-install 'prompt)
