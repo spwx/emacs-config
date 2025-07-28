@@ -60,6 +60,7 @@
     "w" '(:keymap evil-window-map :wk "Windows")
     "b" '(:ignore t :wk "Buffers")
     "bb" '(switch-to-buffer :wk "Switch Buffer")
+    "br" '(revert-buffer :wk "Revert Buffer")
     "bd" '(evil-delete-buffer :which-key "Delete Buffer")
     "bn" '(next-buffer :which-key "next")
     "bp" '(previous-buffer :which-key "prev")
