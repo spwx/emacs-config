@@ -125,6 +125,7 @@
 
 ;; Setup treesitter
 (use-package treesit-auto
+  :after emacs
   :custom
   (treesit-auto-install 'prompt)
   :config
