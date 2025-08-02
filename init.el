@@ -123,6 +123,13 @@
   ;; Turns on magit nerd-icons
   (magit-format-file-function #'magit-format-file-nerd-icons))
 
+;; Terminal Emulator
+(use-package eat
+  :config
+  (when (eq system-type 'darwin)
+	(define-key eat-semi-char-mode-map (kbd "C-h")  #'eat-self-input)
+	(define-key eat-semi-char-mode-map (kbd "<backspace>") (kbd "C-h"))))
+
 ;; Setup treesitter
 (use-package treesit-auto
   :after emacs
