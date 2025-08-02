@@ -130,11 +130,10 @@
 	(define-key eat-semi-char-mode-map (kbd "C-h")  #'eat-self-input)
 	(define-key eat-semi-char-mode-map (kbd "<backspace>") (kbd "C-h"))))
 
-;; Setup treesitter
-(use-package treesit-auto
-  :after emacs
-  :custom
-  (treesit-auto-install 'prompt)
-  :config
-  (treesit-auto-add-to-auto-mode-alist 'all)
-  (global-treesit-auto-mode t))
+;; ;; Setup treesitter
+;; (use-package treesit-auto
+;;   :custom
+;;   (treesit-auto-install 'prompt)
+;;   :config
+;;   (treesit-auto-add-to-auto-mode-alist 'all)
+;;   (global-treesit-auto-mode t))
