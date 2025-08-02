@@ -14,10 +14,10 @@
 ;; Emacs built-ins configuration
 (load-file (expand-file-name "emacs-config.el" user-emacs-directory))
 
-;; Vim key mappings configuration
+;; Vim (evil) key mappings configuration
 (load-file (expand-file-name "evil-config.el" user-emacs-directory))
 
-;; Org configuration
+;; Org-mode configuration
 (load-file (expand-file-name "org-config.el" user-emacs-directory))
 
 ;; Autocomplete and Minibuffer configuration
@@ -28,7 +28,7 @@
   :config
   (load-theme 'ef-maris-dark t))
 
-;; Modeline
+;; Pretty Modeline
 (use-package doom-modeline
   :custom (column-number-mode t)
   :init (doom-modeline-mode 1))
@@ -55,7 +55,7 @@
   (:keymaps 'global :states 'normal "s" #'avy-goto-char-timer)
   (:keymaps 'global :states 'normal "gs" #'avy-resume))
 
-;; Colorful delimeters
+;; Colorful delimiters
 (use-package rainbow-delimiters
   :ensure t
   :hook ((prog-mode . rainbow-delimiters-mode)
@@ -68,7 +68,7 @@
   :general
   (:keymaps 'global :states 'normal "z=" #'jinx-correct))
 
-;; Snippets
+;; Snippet Engine
 (use-package tempel
   :bind
     (:map tempel-map
@@ -88,7 +88,7 @@
   (add-hook 'prog-mode-hook 'tempel-setup-capf)
   (add-hook 'text-mode-hook 'tempel-setup-capf))
 
-;; More Snippets
+;; Snippets
 (use-package tempel-collection :after tempel)
 
 ;; Git gutters
