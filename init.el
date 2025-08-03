@@ -59,7 +59,7 @@
 (use-package rainbow-delimiters
   :ensure t
   :hook ((prog-mode . rainbow-delimiters-mode)
-         (text-mode . rainbow-delimiters-mode)
+         ;; (text-mode . rainbow-delimiters-mode)
          (conf-mode . rainbow-delimiters-mode)))
 
 ;; Spell checking
