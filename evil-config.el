@@ -1,14 +1,16 @@
 ;; Evil mode
 (use-package evil
+  :init
+  ;; Moved here since this wasn't getting set in the :custom section
+  (setq evil-want-Y-yank-to-eol t)
   :custom
   (evil-want-keybinding nil)
-  (evil-want-C-i-jump nil)
   (evil-want-C-u-scroll t)
   (evil-want-C-u-delete t)
-  (evil-want-Y-yank-to-eol t)
   (evil-vsplit-window-right t)
   (evil-split-window-below t)
-  (evil-respect-visual-line-mode t)
+  ;; this is causing issues with dd on a collapsed headline in org
+  ;; (evil-respect-visual-line-mode t)
   (evil-undo-system 'undo-fu)
   (evil-want-fine-undo t)
   :config
@@ -33,17 +35,19 @@
 
 ;; Surround
 (use-package evil-surround
+  :after evil
   :config (global-evil-surround-mode 1))
 
 ;; Highlight yank & paste
 (use-package evil-goggles
-  :ensure t
+  :after evil
   :config
   (evil-goggles-mode)
   (evil-goggles-use-diff-faces))
 
 ;; Setup key mappings
 (use-package general
+  :after evil
   :config
   (general-create-definer my/leader-keys
     :states '(normal visual motion)
