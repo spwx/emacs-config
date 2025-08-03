@@ -38,7 +38,7 @@
   :general
   (my/leader-keys
     "oj" '(:ignore t :wk "Journal")
-    "ojt" '(org-journal-open-current-journal-file :wk "Create entry")
+    "ojt" '(org-journal-open-current-journal-file :wk "Go to Today")
     "ojj" '(org-journal-new-entry :wk "Create entry"))
   (my/leader-keys
     :keymaps 'org-journal-mode-map

@@ -125,10 +125,28 @@
 
 ;; Terminal Emulator
 (use-package eat
+  :general
+  (my/leader-keys
+    "t" '(eat t :wk "Eat (terminal)"))
   :config
+  (add-hook 'eat-exit-hook
+          (lambda (_process)
+			;; Get the window of the current buffer
+            (let ((win (get-buffer-window (current-buffer))))
+			  ;; If the current buffer is alive, kill it
+              (when (buffer-live-p (current-buffer))
+                (kill-buffer (current-buffer)))
+			  ;; If there is more than 1 window, delete the window the current
+			  ;; buffer was in
+              (when (and win (> (length (window-list)) 1))
+                (delete-window win)))))
   (when (eq system-type 'darwin)
 	(define-key eat-semi-char-mode-map (kbd "C-h")  #'eat-self-input)
 	(define-key eat-semi-char-mode-map (kbd "<backspace>") (kbd "C-h"))))
+
+;; Try to configure indentation per file
+(use-package dtrt-indent
+  :init (setq dtrt-indent-global-mode t))
 
 ;; ;; Setup treesitter
 ;; (use-package treesit-auto

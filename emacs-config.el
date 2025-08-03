@@ -1,38 +1,37 @@
+(make-directory "~/.emacs_backups/" t)
+(make-directory "~/.emacs_autosave/" t)
+
 ;; Most of this is from: https://github.com/LionyxML/emacs-kick/
 (use-package emacs
   :ensure nil
   :custom                                         ;; Set custom variables to configure Emacs behavior.
+  (help-window-select t)                          ;; Jump to a help window when one is opened
+  (require-final-newline t)                       ;; Always include a newline at EOF
+  (sentence-end-double-space nil)                 ;; A sentence doesn't need two spaces after the period
   (column-number-mode t)                          ;; Display the column number in the mode line.
-  (auto-save-default nil)                         ;; Disable automatic saving of buffers.
-  (create-lockfiles nil)                          ;; Prevent the creation of lock files when editing.
-  (delete-by-moving-to-trash t)                   ;; Move deleted files to the trash instead of permanently deleting them.
-  (delete-selection-mode 1)                       ;; Enable replacing selected text with typed text.
-  (display-line-numbers-type 'relative)           ;; Use relative line numbering in programming modes.
+  (ring-bell-function 'ignore)                    ;; Disable the audible bell.
+  (tab-always-indent 'complete)                   ;; Make the TAB key complete text instead of just indenting.
   (global-auto-revert-non-file-buffers t)         ;; Automatically refresh non-file buffers.
-  (history-length 25)                             ;; Set the length of the command history.
   (recentf-max-menu-items 25)                     ;; Set number of files to remember
+  (create-lockfiles nil)                          ;; Prevent the creation of lock files when editing.
+  (auto-save-file-name-transforms '((".*" "~/.emacs_autosave/" t)))
+  (backup-directory-alist '(("." . "~/.emacs_backups/")))
+  (backup-by-copying t)
+  (delete-by-moving-to-trash t)                   ;; Move deleted files to the trash instead of permanently deleting them.
   (inhibit-startup-message t)                     ;; Disable the startup message when Emacs launches.
   (initial-scratch-message "")                    ;; Clear the initial message in the *scratch* buffer.
-  (ispell-dictionary "en_US")                     ;; Set the default dictionary for spell checking.
-  (make-backup-files nil)                         ;; Disable creation of backup files.
   (pixel-scroll-precision-mode t)                 ;; Enable precise pixel scrolling.
   (pixel-scroll-precision-use-momentum nil)       ;; Disable momentum scrolling for pixel precision.
-  (ring-bell-function 'ignore)                    ;; Disable the audible bell.
-  (split-width-threshold 300)                     ;; Prevent automatic window splitting if the window width exceeds 300 pixels.
   (switch-to-buffer-obey-display-actions t)       ;; Make buffer switching respect display actions.
-  (tab-always-indent 'complete)                   ;; Make the TAB key complete text instead of just indenting.
-  (tab-width 4)                                   ;; Set the tab width to 4 spaces.
-  (treesit-font-lock-level 4)                     ;; Use advanced font locking for Treesit mode.
-  (truncate-lines t)                              ;; Enable line truncation to avoid wrapping long lines.
   (use-dialog-box nil)                            ;; Disable dialog boxes in favor of minibuffer prompts.
   (use-short-answers t)                           ;; Use short answers in prompts for quicker responses (y instead of yes)
+  (truncate-lines t)                              ;; Enable line truncation to avoid wrapping long lines.
   (warning-minimum-level :emergency)              ;; Set the minimum level of warnings to display.
-  (help-window-select t)                          ;; Jump to a help window when one is opened
 
   :config
 
   ;; Save manual customizations to a separate file instead of cluttering `init.el'.
-  (setq custom-file (locate-user-emacs-file "custom-vars.el")) ;; Specify the custom file path.
+  (setopt custom-file (locate-user-emacs-file "custom-vars.el")) ;; Specify the custom file path.
   (load custom-file 'noerror 'nomessage)                       ;; Load the custom file quietly, ignoring errors.
 
   ;; Makes Emacs vertical divisor the symbol │ instead of |.
@@ -47,7 +46,6 @@
 
   (global-hl-line-mode 1)      ;; Enable highlight of the current line
   (global-auto-revert-mode 1)  ;; Enable global auto-revert mode to keep buffers up to date with their corresponding files.
-  (indent-tabs-mode -1)        ;; Disable the use of tabs for indentation (use spaces instead).
   (recentf-mode 1)             ;; Enable tracking of recently opened files.
   (savehist-mode 1)            ;; Enable saving of command history.
   (save-place-mode 1)          ;; Enable saving the place in files for easier return.
