@@ -211,3 +211,21 @@
    (t (message "Not on a link or checkbox, pal!"))))
 (with-eval-after-load 'evil
   (evil-define-key 'normal org-mode-map (kbd "RET") #'my/org-activate-link-or-checkbox))
+
+(defun create-case-file ()
+  "Prompt for an FFID, create/open ~/org/cases/FFID.org, and insert a template"
+  (interactive)
+  (let* ((ffid (read-string "FFID: "))
+         (filename (expand-file-name (concat ffid ".org") "~/org/cases/"))
+         (file-existed (file-exists-p filename)))
+    (when (string-empty-p ffid)
+      (error "FFID cannot be empty"))
+    (make-directory (file-name-directory filename) t)
+    (find-file filename)
+    ;; Only insert template if file is new or empty
+    (when (or (not file-existed) (= (point-max) 1))
+      ;; Bind ffid so the template can access it
+      (let ((ffid ffid))
+        (tempel-insert 'case-template)))))
+  (my/leader-keys
+    "of" '(create-case-file :wk "Create case"))
