@@ -72,6 +72,21 @@
 	  (message "Region converted to GFM and copied to clipboard"))
       (message "No region selected")))
 
+  ;; Convert MD to ORG and copy to Clipboard
+  (defun gfm-to-org ()
+  "Convert the selected region from org format to GitHub Flavored Markdown and copy to clipboard."
+  (interactive)
+  (if (use-region-p)
+      (let ((start (region-beginning))
+            (end (region-end)))
+        (shell-command-on-region
+         start end
+         "/opt/homebrew/bin/pandoc -f gfm -t org --wrap=none"
+         nil  ; OUTPUT-BUFFER (nil means temp buffer)
+         t)   ; REPLACE - this replaces the region with command output
+        (message "Region converted to ORG and replaced"))
+    (message "No region selected")))
+
   ;; Better org-do-demote
   (defun my/org-smart-demote ()
     "Demote heading if on one, otherwise call `evil-shift-right-line`."
@@ -133,6 +148,7 @@
   (my/leader-keys
     :keymaps 'org-mode-map
     :states '(visual)
+    "oo" '(gfm-to-org :wk "Convert to ORG")
     "om" '(org-to-gfm-clipboard :wk "Convert to MD"))
 
   (general-define-key
