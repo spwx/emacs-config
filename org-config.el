@@ -119,6 +119,8 @@
     "ot" '(org-todo :wk "Todo")
     "oT" '(org-show-todo-tree :wk "Todo tree")
     "or" '(org-refile :wk "Refile")
+    "o*" '(org-ctrl-c-star :wk "Make headline")
+    "o-" '(org-ctrl-c-minus :wk "Make list")
     "oB" '(org-babel-tangle :wk "tangle")
     "oi"  '(:ignore t :wk "Insert")
     "oit" '(org-insert-structure-template :wk "Insert template")
