@@ -6,7 +6,8 @@
   (org-link-frame-setup '((file . find-file))) ;; open links in the current window
   (org-agenda-files '("~/org/logs/2025/07-July/00-july_tasks.org"))
   (org-startup-folded 'overview)
-  (org-todo-keywords '((sequence "TODO(t)" "WAIT(w)" "|" "STOP(s)" "DONE(d)")))
+  (org-log-into-drawer t)
+  (org-todo-keywords '((sequence "TODO(t)" "WAIT(w!)" "|" "STOP(s!)" "DONE(d!)")))
   (org-todo-keyword-faces '(("WAIT" . "orange")
           ("STOP" . (:foreground "dimgray" :strike-through t))))
   :config
