@@ -201,12 +201,12 @@
   "In normal mode, check checkbox or follow link under point."
   (interactive)
   (cond
-   ;; If on a checkbox, toggle it
-   ((org-at-item-checkbox-p)
-    (call-interactively #'org-toggle-checkbox))
    ;; If on a link, open it
    ((org-in-regexp org-link-any-re)
     (call-interactively #'org-open-at-point))
+   ;; If on a checkbox, toggle it
+   ((org-at-item-checkbox-p)
+    (call-interactively #'org-toggle-checkbox))
    ;; Otherwise, do nothing or beep sarcastically
    (t (message "Not on a link or checkbox, pal!"))))
 (with-eval-after-load 'evil
