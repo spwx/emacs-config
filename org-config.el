@@ -4,15 +4,23 @@
 (use-package org
   :custom
   (org-link-frame-setup '((file . find-file))) ;; open links in the current window
-  (org-agenda-files '("~/org/logs/2025/07-July/00-july_tasks.org"))
+  (org-agenda-files '("~/org/tasks.org"))
+  (org-agenda-show-future-repeats nil)
+  (org-deadline-warning-days 0)
+  (org-default-notes-file "~/org/tasks.org")
+  (org-capture-templates
+   '(("t" "Schedule task" entry (file+headline "" "Tasks")
+      "* TODO %?\nSCHEDULED: %t\n%a\n\n")))
   (org-startup-folded 'overview)
   (org-log-into-drawer t)
   (org-todo-keywords '((sequence "TODO(t)" "WAIT(w!)" "|" "STOP(s!)" "DONE(d!)")))
   (org-todo-keyword-faces '(("WAIT" . "orange")
           ("STOP" . (:foreground "dimgray" :strike-through t))))
+  (org-M-RET-may-split-line '((default . nil)))
+  (org-insert-heading-respect-content t)
   :config
   ;; evil-collection's org-agenda bindings are set for motion mode
-  (evil-set-initial-state 'org-agenda-mode 'motion)
+  ;; (evil-set-initial-state 'org-agenda-mode 'motion)
   ;; Make Org Pretty
   (add-hook 'org-mode-hook #'org-indent-mode))
 
@@ -34,27 +42,6 @@
 (use-package org-download
   :config
   (add-hook 'dired-mode-hook 'org-download-enable))
-
-(use-package org-journal
-  :general
-  (my/leader-keys
-    "oj" '(:ignore t :wk "Journal")
-    "ojt" '(org-journal-open-current-journal-file :wk "Go to Today")
-    "ojj" '(org-journal-new-entry :wk "Create entry"))
-  (my/leader-keys
-    :keymaps 'org-journal-mode-map
-    "ojp" '(org-journal-previous-entry :wk "Previous entry")
-    "ojn" '(org-journal-next-entry :wk "Next entry"))
-  :custom
-  ;; Fullscreen journal window
-  (org-journal-find-file-fn 'find-file)
-  (org-journal-enable-agenda-integration t)
-  (org-journal-dir "~/org/logs/")
-  ;; the name of the actual file must include %Y%m%d !!!
-  (org-journal-file-format "%Y/%m-%B/%Y%m%d.org")
-  (org-journal-file-header
-   (concat "#+title: " (format-time-string "%Y-%m-%d") "\n"
-	   "#+author: spw\n\n")))
 
 (use-package org
   :preface
@@ -141,6 +128,7 @@
     "oit" '(org-insert-structure-template :wk "Insert template")
     "oi." '(org-timestamp :wk "Timestamp")
     "oii" '(org-download-clipboard :wk "Image from Clipboard")
+    "oin" '(org-add-note :wk "Insert note")
     "oid" '(org-deadline :wk "Deadline")
     "ois" '(org-schedule :wk "Schedule")
     "oil" '(org-insert-link :wk "Insert link")
@@ -212,20 +200,51 @@
 (with-eval-after-load 'evil
   (evil-define-key 'normal org-mode-map (kbd "RET") #'my/org-activate-link-or-checkbox))
 
-(defun create-case-file ()
-  "Prompt for an FFID, create/open ~/org/cases/FFID.org, and insert a template"
-  (interactive)
-  (let* ((ffid (read-string "FFID: "))
-         (filename (expand-file-name (concat ffid ".org") "~/org/cases/"))
-         (file-existed (file-exists-p filename)))
-    (when (string-empty-p ffid)
-      (error "FFID cannot be empty"))
-    (make-directory (file-name-directory filename) t)
-    (find-file filename)
-    ;; Only insert template if file is new or empty
-    (when (or (not file-existed) (= (point-max) 1))
-      ;; Bind ffid so the template can access it
-      (let ((ffid ffid))
-        (tempel-insert 'case-template)))))
+
+;; Notes
+(use-package denote
+  :hook (dired-mode . denote-dired-mode)
+  :general
   (my/leader-keys
-    "of" '(create-case-file :wk "Create case"))
+    "d" '(:ignore t :wk "Denote")
+    "dn" '(denote :wk "New")
+    "dr" '(denote-rename-file :wk "Rename")
+    "dl" '(denote-link :wk "Link")
+    "dL" '(denote-add-links :wk "Link")
+    "db" '(denote-backlinks :wk "Backlinks")
+    "dd" '(denote-dired :wk "Dired")
+    "dG" '(denote-grep :wk "Grep"))
+  :config
+  (setq denote-directory (expand-file-name "~/org/notes/"))
+
+  ;; Automatically rename Denote buffers when opening them so that
+  ;; instead of their long file name they have, for example, a literal
+  ;; "[D]" followed by the file's title.  Read the doc string of
+  ;; `denote-rename-buffer-format' for how to modify this.
+  (denote-rename-buffer-mode 1))
+
+(use-package consult-denote
+  :general
+  (my/leader-keys
+    "df" '(consult-denote-find :wk "Journal")
+    "dg" '(consult-denote-grep :wk "Journal Link"))
+  :config
+  (consult-denote-mode 1))
+
+(use-package denote-journal
+  ;; Bind those to some key for your convenience.
+  :general
+  (my/leader-keys
+    "dj" '(denote-journal-new-or-existing-entry :wk "Journal")
+    "dJ" '(denote-journal-link-or-create-entry :wk "Journal Link"))
+  :hook (calendar-mode . denote-journal-calendar-mode)
+  :config
+  ;; Use the "journal" subdirectory of the `denote-directory'.  Set this
+  ;; to nil to use the `denote-directory' instead.
+  (setq denote-journal-directory
+        (expand-file-name "journal" denote-directory))
+  ;; Default keyword for new journal entries. It can also be a list of
+  ;; strings.
+  (setq denote-journal-keyword "journal")
+  ;; Read the doc string of `denote-journal-title-format'.
+  (setq denote-journal-title-format 'day-date-month-year))
