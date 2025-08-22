@@ -96,3 +96,14 @@
   "Bind <escape> to `keyboard-escape-quit' (same effect as C-g)."
   (local-set-key (kbd "<escape>") #'keyboard-escape-quit))
 (add-hook 'minibuffer-setup-hook #'my/minibuffer-escape)
+
+(defun copy-buffer-file-path ()
+  "Copy the file path of the current buffer to the kill ring."
+  (interactive)
+  (let ((file-path (buffer-file-name)))
+    (if file-path
+        (progn
+          (kill-new file-path)
+          (message "Copied to kill ring: %s" file-path))
+      (message "Buffer is not visiting a file"))))
+(my/leader-keys "fy" '(copy-buffer-file-path :wk "Copy path"))
