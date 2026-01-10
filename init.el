@@ -32,7 +32,6 @@
 
 ;; Pretty Modeline
 (use-package doom-modeline
-  :custom (column-number-mode t)
   :init (doom-modeline-mode 1))
 
 ;; Key mapping hints
@@ -42,7 +41,7 @@
 
 ;; Better help buffers
 (use-package helpful
-  :defer t)
+  :commands (helpful-symbol helpful-callable helpful-variable helpful-key helpful-at-point))
 
 ;; Better undo
 (use-package undo-fu)
@@ -171,6 +170,9 @@
 ;; LSP support via Eglot (built-in)
 (use-package eglot
   :ensure nil
+  :custom
+  (eglot-events-buffer-size 0)  ; Disable event logging for performance
+  (eglot-autoshutdown t)        ; Shutdown server when last buffer closes
   :hook ((python-mode . eglot-ensure)
          (python-ts-mode . eglot-ensure)
          (js-mode . eglot-ensure)
