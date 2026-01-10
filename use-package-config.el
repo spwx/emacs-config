@@ -7,12 +7,8 @@
 (require 'package)
 (setopt package-archives '(("melpa" . "https://melpa.org/packages/")
                            ("gnu"   . "https://elpa.gnu.org/packages/")
-						   ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
+                           ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
 (package-initialize)
-
-;; Ensure package list is up to date
-(unless package-archive-contents
-  (package-refresh-contents))
 
 ;; Use use-package by default
 (eval-when-compile
