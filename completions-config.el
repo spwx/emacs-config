@@ -50,9 +50,10 @@
 
 ;; Quick directory switching
 (use-package consult-dir
-  :bind (:map minibuffer-local-completion-map
-         ("C-x d" . consult-dir)
-         ("C-x j" . consult-dir-jump-file)))
+  :general
+  (:keymaps 'minibuffer-local-completion-map
+   "C-x d" #'consult-dir
+   "C-x j" #'consult-dir-jump-file))
 
 ;; Icons
 (use-package nerd-icons)
@@ -134,6 +135,5 @@
 
 ;; Consult users will also want the embark-consult package.
 (use-package embark-consult
-  :ensure t ; only need to install it, embark loads it after consult if found
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))

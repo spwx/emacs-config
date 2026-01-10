@@ -67,7 +67,6 @@
     "wU" '(winner-redo :wk "Winner redo")
     "b" '(:ignore t :wk "Buffers")
     "bb" '(switch-to-buffer :wk "Switch Buffer")
-    "br" '(revert-buffer :wk "Revert Buffer")
     "bd" '(evil-delete-buffer :wk "Delete Buffer")
     "bn" '(next-buffer :wk "Next")
     "bp" '(previous-buffer :wk "Prev")
@@ -116,7 +115,11 @@
   (let ((sym (symbol-at-point)))
     (when sym
       (helpful-symbol sym))))
-(evil-define-key 'normal emacs-lisp-mode-map (kbd "K") #'my/describe-symbol-at-point)
+
+(general-define-key
+ :states 'normal
+ :keymaps 'emacs-lisp-mode-map
+ "K" #'my/describe-symbol-at-point)
 
 ;; Make <escape> abort like C-g in the minibuffer (Emacs 28+)
 (defun my/minibuffer-escape ()
