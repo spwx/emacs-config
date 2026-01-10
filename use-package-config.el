@@ -23,4 +23,5 @@
   (when (and (not (package-built-in-p name))
              (not (memq name package-selected-packages)))
     (add-to-list 'package-selected-packages name)))
-(advice-add 'use-package-ensure-elpa :after #'my/use-package-ensure-add-to-selected)
+(when (fboundp 'use-package-ensure-elpa)
+  (advice-add 'use-package-ensure-elpa :after #'my/use-package-ensure-add-to-selected))
