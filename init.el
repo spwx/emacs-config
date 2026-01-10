@@ -1,3 +1,4 @@
+;;; -*- lexical-binding: t -*-
 ;;
 ;; General Setting
 ;;
@@ -99,7 +100,6 @@
 (use-package diff-hl
   :general
   (my/leader-keys
-    "g" '(:ignore t :wk "Git")
     "gd" '(diff-hl-show-hunk :wk "Diff hunk")
     "gn" '(diff-hl-next-hunk :wk "Next hunk")
     "gp" '(diff-hl-previous-hunk :wk "Previous hunk")
@@ -118,7 +118,6 @@
 (use-package magit
   :general
   (my/leader-keys
-    "g" '(:ignore t :wk "Git")
     "gg" '(magit :wk "Magit!"))
   :custom
   ;; Make Magit full screen
@@ -131,7 +130,7 @@
 (use-package eat
   :general
   (my/leader-keys
-    "t" '(eat t :wk "Eat (terminal)"))
+    "t" '(eat :wk "Eat (terminal)"))
   :config
   (add-hook 'eat-exit-hook
           (lambda (_process)
@@ -150,7 +149,7 @@
 
 ;; Try to configure indentation per file
 (use-package dtrt-indent
-  :init (setq dtrt-indent-global-mode t))
+  :config (dtrt-indent-global-mode 1))
 
 ;; ;; Setup treesitter
 ;; (use-package treesit-auto

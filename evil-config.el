@@ -1,3 +1,4 @@
+;;; -*- lexical-binding: t -*-
 ;; Evil mode
 (use-package evil
   :init
@@ -67,9 +68,9 @@
     "b" '(:ignore t :wk "Buffers")
     "bb" '(switch-to-buffer :wk "Switch Buffer")
     "br" '(revert-buffer :wk "Revert Buffer")
-    "bd" '(evil-delete-buffer :which-key "Delete Buffer")
-    "bn" '(next-buffer :which-key "next")
-    "bp" '(previous-buffer :which-key "prev")
+    "bd" '(evil-delete-buffer :wk "Delete Buffer")
+    "bn" '(next-buffer :wk "Next")
+    "bp" '(previous-buffer :wk "Prev")
     "f" '(:ignore t :wk "Files")
     "ff" '(find-file :wk "Find file")
     "fr" '(consult-recent-file :wk "Recent files")
@@ -94,6 +95,7 @@
     "sk" '(consult-kmacro :wk "Kmacro")
     "sr" '(consult-register :wk "Register")
     "sy" '(consult-yank-pop :wk "Yank pop")
+    "g" '(:ignore t :wk "Git")
     ))
 
 ;; Shift-K in Elisp mode

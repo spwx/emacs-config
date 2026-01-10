@@ -1,3 +1,4 @@
+;;; -*- lexical-binding: t -*-
 ;; auto-insert line breaks
 (add-hook 'text-mode-hook #'auto-fill-mode)
 
@@ -228,8 +229,8 @@
 (use-package consult-denote
   :general
   (my/leader-keys
-    "df" '(consult-denote-find :wk "Journal")
-    "dg" '(consult-denote-grep :wk "Journal Link"))
+    "df" '(consult-denote-find :wk "Find")
+    "dg" '(consult-denote-grep :wk "Grep"))
   :config
   (consult-denote-mode 1))
 

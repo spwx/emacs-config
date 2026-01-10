@@ -1,3 +1,4 @@
+;;; -*- lexical-binding: t -*-
 (make-directory "~/.emacs_backups/" t)
 (make-directory "~/.emacs_autosave/" t)
 
@@ -14,7 +15,7 @@
   (global-auto-revert-non-file-buffers t)         ;; Automatically refresh non-file buffers.
   (recentf-max-menu-items 25)                     ;; Set number of files to remember
   (create-lockfiles nil)                          ;; Prevent the creation of lock files when editing.
-  (auto-save-file-name-transforms '((".*" "~/.emacs_autosave/" t)))
+  (auto-save-file-name-transforms `((".*" ,(expand-file-name "~/.emacs_autosave/") t)))
   (backup-directory-alist '(("." . "~/.emacs_backups/")))
   (backup-by-copying t)
   (delete-by-moving-to-trash t)                   ;; Move deleted files to the trash instead of permanently deleting them.
@@ -39,11 +40,7 @@
   (server-start)
 
   :init                        ;; Initialization settings that apply before the package is loaded.
-  (tool-bar-mode -1)           ;; Disable the tool bar for a cleaner interface.
-  (menu-bar-mode -1)           ;; Disable the menu bar for a more streamlined look.
-
-  (when scroll-bar-mode
-    (scroll-bar-mode -1))      ;; Disable the scroll bar if it is active.
+  ;; NOTE: tool-bar-mode, menu-bar-mode, scroll-bar-mode are disabled in early-init.el
 
   (global-hl-line-mode 1)      ;; Enable highlight of the current line
   (global-auto-revert-mode 1)  ;; Enable global auto-revert mode to keep buffers up to date with their corresponding files.
