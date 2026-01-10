@@ -43,6 +43,10 @@
 (use-package undo-fu-session
   :config (undo-fu-session-global-mode))
 
+;; GC optimization - restores gc-cons-threshold after startup
+(use-package gcmh
+  :init (gcmh-mode 1))
+
 ;; Show number of search results
 (use-package anzu
   :config (global-anzu-mode +1))
