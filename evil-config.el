@@ -107,3 +107,17 @@
           (message "Copied to kill ring: %s" file-path))
       (message "Buffer is not visiting a file"))))
 (my/leader-keys "fy" '(copy-buffer-file-path :wk "Copy path"))
+
+(defun delete-this-file ()
+  "Move the current buffer's file to trash and kill the buffer."
+  (interactive)
+  (let ((filename (buffer-file-name)))
+    (if filename
+        (if (y-or-n-p (format "Move %s to trash? " filename))
+            (progn
+              (move-file-to-trash filename)
+              (message "Moved %s to trash" filename)
+              (kill-buffer (current-buffer)))
+          (message "Cancelled"))
+      (message "Current buffer is not visiting a file"))))
+(my/leader-keys "fd" '(delete-this-file :wk "Delete file"))
