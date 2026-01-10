@@ -2,18 +2,18 @@
 ;; Evil mode
 (use-package evil
   :init
-  ;; Moved here since this wasn't getting set in the :custom section
+  ;; These must be set before Evil loads
   (setq evil-want-Y-yank-to-eol t)
+  (setq evil-want-keybinding nil)
+  (setq evil-want-C-u-scroll t)
+  (setq evil-want-C-u-delete t)
+  (setq evil-want-fine-undo t)
   :custom
-  (evil-want-keybinding nil)
-  (evil-want-C-u-scroll t)
-  (evil-want-C-u-delete t)
   (evil-vsplit-window-right t)
   (evil-split-window-below t)
   ;; this is causing issues with dd on a collapsed headline in org
   ;; (evil-respect-visual-line-mode t)
   (evil-undo-system 'undo-fu)
-  (evil-want-fine-undo t)
   :config
   (evil-mode 1)
 
