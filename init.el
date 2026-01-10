@@ -167,6 +167,72 @@
 (use-package yaml-mode :defer t)
 (use-package json-mode :defer t)
 
+;; Flycheck - syntax checking
+(use-package flycheck
+  :hook (rustic-mode . flycheck-mode))
+
+;; LSP Mode - Language Server Protocol client
+(use-package lsp-mode
+  :commands (lsp lsp-deferred)
+  :custom
+  ;; Performance tuning
+  (lsp-idle-delay 0.5)
+  (lsp-log-io nil)
+  ;; Rust-analyzer settings
+  (lsp-rust-analyzer-cargo-watch-command "clippy")  ; Use clippy for on-save checks
+  (lsp-rust-analyzer-display-inlay-hints t)
+  :config
+  ;; Disable features handled by other packages
+  (setq lsp-headerline-breadcrumb-enable nil))
+
+;; LSP UI enhancements
+(use-package lsp-ui
+  :after lsp-mode
+  :custom
+  (lsp-ui-doc-enable t)
+  (lsp-ui-doc-position 'at-point)
+  (lsp-ui-sideline-enable t)
+  (lsp-ui-sideline-show-code-actions t))
+
+;; Rust development with rustic
+(use-package rustic
+  :after (flycheck lsp-mode)
+  :custom
+  ;; Use lsp-mode for better Rust support
+  (rustic-lsp-client 'lsp-mode)
+  ;; Format on save
+  (rustic-format-on-save t)
+  ;; Store cargo arguments for reuse with C-u
+  (rustic-cargo-use-last-stored-arguments t)
+  :general
+  ;; Shift-K for hover docs (like Vim)
+  (:states 'normal :keymaps 'rustic-mode-map
+   "K" #'lsp-describe-thing-at-point)
+  (my/leader-keys
+    :keymaps 'rustic-mode-map
+    "l" '(:ignore t :wk "LSP")
+    "la" '(lsp-execute-code-action :wk "Code actions")
+    "lr" '(lsp-rename :wk "Rename")
+    "lf" '(rustic-format-buffer :wk "Format")
+    "ld" '(lsp-find-definition :wk "Definition")
+    "lD" '(lsp-find-references :wk "References")
+    "lh" '(lsp-describe-thing-at-point :wk "Hover doc")
+    "lm" '(lsp-rust-analyzer-expand-macro :wk "Expand macro")
+    "li" '(lsp-rust-analyzer-inlay-hints-mode :wk "Toggle inlay hints")
+    ;; Cargo commands
+    "c" '(:ignore t :wk "Cargo")
+    "cb" '(rustic-cargo-build :wk "Build")
+    "cc" '(rustic-cargo-check :wk "Check")
+    "cr" '(rustic-cargo-run :wk "Run")
+    "ct" '(rustic-cargo-test :wk "Test")
+    "cT" '(rustic-cargo-current-test :wk "Test at point")
+    "cl" '(rustic-cargo-clippy :wk "Clippy")
+    "cf" '(rustic-cargo-fmt :wk "Cargo fmt")
+    "cd" '(rustic-cargo-doc :wk "Open docs")
+    "ca" '(rustic-cargo-add :wk "Add crate")
+    "co" '(rustic-cargo-outdated :wk "Outdated")
+    "cp" '(rustic-popup :wk "Popup")))
+
 ;; LSP support via Eglot (built-in)
 (use-package eglot
   :ensure nil
@@ -180,8 +246,7 @@
          (typescript-mode . eglot-ensure)
          (typescript-ts-mode . eglot-ensure)
          (tsx-ts-mode . eglot-ensure)
-         (rust-mode . eglot-ensure)
-         (rust-ts-mode . eglot-ensure)
+         ;; Rust handled by rustic package
          (html-mode . eglot-ensure)
          (css-mode . eglot-ensure)
          (json-mode . eglot-ensure)
@@ -199,7 +264,6 @@
   (my/leader-keys
     :keymaps '(python-mode-map python-ts-mode-map
                js-mode-map js-ts-mode-map typescript-mode-map typescript-ts-mode-map tsx-ts-mode-map
-               rust-mode-map rust-ts-mode-map
                sh-mode-map bash-ts-mode-map
                html-mode-map css-mode-map
                json-mode-map json-ts-mode-map
