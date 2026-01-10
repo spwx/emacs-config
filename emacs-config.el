@@ -20,13 +20,12 @@
   (delete-by-moving-to-trash t)                   ;; Move deleted files to the trash instead of permanently deleting them.
   (inhibit-startup-message t)                     ;; Disable the startup message when Emacs launches.
   (initial-scratch-message "")                    ;; Clear the initial message in the *scratch* buffer.
-  (pixel-scroll-precision-mode t)                 ;; Enable precise pixel scrolling.
   (pixel-scroll-precision-use-momentum nil)       ;; Disable momentum scrolling for pixel precision.
   (switch-to-buffer-obey-display-actions t)       ;; Make buffer switching respect display actions.
   (use-dialog-box nil)                            ;; Disable dialog boxes in favor of minibuffer prompts.
   (use-short-answers t)                           ;; Use short answers in prompts for quicker responses (y instead of yes)
   (truncate-lines t)                              ;; Enable line truncation to avoid wrapping long lines.
-  (warning-minimum-level :emergency)              ;; Set the minimum level of warnings to display.
+  (warning-minimum-level :error)              ;; Set the minimum level of warnings to display.
 
   :config
 
@@ -48,6 +47,7 @@
 
   (global-hl-line-mode 1)      ;; Enable highlight of the current line
   (global-auto-revert-mode 1)  ;; Enable global auto-revert mode to keep buffers up to date with their corresponding files.
+  (pixel-scroll-precision-mode 1) ;; Enable precise pixel scrolling.
   (recentf-mode 1)             ;; Enable tracking of recently opened files.
   (savehist-mode 1)            ;; Enable saving of command history.
   (save-place-mode 1)          ;; Enable saving the place in files for easier return.
