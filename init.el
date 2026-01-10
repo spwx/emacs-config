@@ -1,4 +1,4 @@
-;;; -*- lexical-binding: t -*-
+;;; init.el --- Main Emacs configuration entry point -*- lexical-binding: t -*-
 ;;
 ;; General Setting
 ;;
@@ -56,7 +56,7 @@
 (use-package anzu
   :config (global-anzu-mode +1))
 (use-package evil-anzu
-  :after evil)
+  :after (evil anzu))
 
 ;; Better navigation
 (use-package avy
@@ -66,7 +66,6 @@
 
 ;; Colorful delimiters
 (use-package rainbow-delimiters
-  :ensure t
   :hook ((prog-mode . rainbow-delimiters-mode)
          ;; (text-mode . rainbow-delimiters-mode)
          (conf-mode . rainbow-delimiters-mode)))
@@ -156,26 +155,75 @@
   :config (dtrt-indent-global-mode 1))
 
 ;; Tree-sitter for better syntax highlighting and structural editing
-;; NOTE: Disabled - causes lag on file open
+;; NOTE: Disabled - causes lag when scrolling through files in find-file
 ;; (use-package treesit-auto
 ;;   :custom
-;;   (treesit-auto-install 'prompt)
+;;   (treesit-auto-install nil)
 ;;   :config
 ;;   (treesit-auto-add-to-auto-mode-alist 'all)
 ;;   (global-treesit-auto-mode t))
+
+;; Language mode packages (for non-tree-sitter modes)
+(use-package rust-mode :defer t)
+(use-package typescript-mode :defer t)
+(use-package yaml-mode :defer t)
+(use-package json-mode :defer t)
 
 ;; LSP support via Eglot (built-in)
 (use-package eglot
   :ensure nil
   :hook ((python-mode . eglot-ensure)
-         (python-ts-mode . eglot-ensure))
+         (python-ts-mode . eglot-ensure)
+         (js-mode . eglot-ensure)
+         (js-ts-mode . eglot-ensure)
+         (typescript-mode . eglot-ensure)
+         (typescript-ts-mode . eglot-ensure)
+         (tsx-ts-mode . eglot-ensure)
+         (rust-mode . eglot-ensure)
+         (rust-ts-mode . eglot-ensure)
+         (html-mode . eglot-ensure)
+         (css-mode . eglot-ensure)
+         (json-mode . eglot-ensure)
+         (json-ts-mode . eglot-ensure)
+         (yaml-mode . eglot-ensure)
+         (yaml-ts-mode . eglot-ensure)
+         (sh-mode . eglot-ensure)
+         (bash-ts-mode . eglot-ensure))
   :config
-  ;; Use ty as the Python language server
+  ;; Language server configurations
+  ;; Python: ty (default), alternatives: pyright, pylsp
   (add-to-list 'eglot-server-programs
                '((python-mode python-ts-mode) . ("ty" "server")))
+  ;; TypeScript/JavaScript: typescript-language-server
+  (add-to-list 'eglot-server-programs
+               '((js-mode js-ts-mode typescript-mode typescript-ts-mode tsx-ts-mode)
+                 . ("typescript-language-server" "--stdio")))
+  ;; Rust: rust-analyzer
+  (add-to-list 'eglot-server-programs
+               '((rust-mode rust-ts-mode) . ("rust-analyzer")))
+  ;; Bash: bash-language-server
+  (add-to-list 'eglot-server-programs
+               '((sh-mode bash-ts-mode) . ("bash-language-server" "start")))
+  ;; HTML/CSS: vscode-langservers-extracted
+  (add-to-list 'eglot-server-programs
+               '(html-mode . ("vscode-html-language-server" "--stdio")))
+  (add-to-list 'eglot-server-programs
+               '(css-mode . ("vscode-css-language-server" "--stdio")))
+  ;; JSON: vscode-json-languageserver
+  (add-to-list 'eglot-server-programs
+               '((json-mode json-ts-mode) . ("vscode-json-language-server" "--stdio")))
+  ;; YAML: yaml-language-server
+  (add-to-list 'eglot-server-programs
+               '((yaml-mode yaml-ts-mode) . ("yaml-language-server" "--stdio")))
   :general
   (my/leader-keys
-    :keymaps '(python-mode-map python-ts-mode-map)
+    :keymaps '(python-mode-map python-ts-mode-map
+               js-mode-map js-ts-mode-map typescript-mode-map typescript-ts-mode-map tsx-ts-mode-map
+               rust-mode-map rust-ts-mode-map
+               sh-mode-map bash-ts-mode-map
+               html-mode-map css-mode-map
+               json-mode-map json-ts-mode-map
+               yaml-mode-map yaml-ts-mode-map)
     "l" '(:ignore t :wk "LSP")
     "la" '(eglot-code-actions :wk "Code actions")
     "lr" '(eglot-rename :wk "Rename")
