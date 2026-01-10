@@ -2,6 +2,8 @@
 (add-hook 'text-mode-hook #'auto-fill-mode)
 
 (use-package org
+  :config
+  (add-to-list 'org-src-lang-modes '("json" . json-ts))
   :custom
   (org-link-frame-setup '((file . find-file))) ;; open links in the current window
   (org-agenda-files '("~/org/tasks.org"))
