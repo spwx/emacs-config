@@ -18,9 +18,9 @@
 	  (message "Region converted to GFM and copied to clipboard"))
       (message "No region selected")))
 
-  ;; Convert MD to ORG and copy to Clipboard
+  ;; Convert GFM to ORG in place
   (defun gfm-to-org ()
-  "Convert the selected region from org format to GitHub Flavored Markdown and copy to clipboard."
+  "Convert the selected region from GitHub Flavored Markdown to Org format in place."
   (interactive)
   (if (use-region-p)
       (let ((start (region-beginning))
@@ -57,7 +57,7 @@
 	(org-do-promote)
       (evil-shift-left-line 1)))
 
-  ;; Better org-demote-subtree
+  ;; Better org-promote-subtree
   (defun my/org-smart-promote-subtree ()
     "Promote subtree if on a heading, otherwise call `evil-shift-right-line`."
     (interactive)
@@ -83,7 +83,8 @@
   (org-insert-heading-respect-content t)
 
   :config
-  (add-to-list 'org-src-lang-modes '("json" . json-ts))
+  ;; Map json src blocks to js-json-mode (tree-sitter modes don't work well in org src blocks)
+  (add-to-list 'org-src-lang-modes '("json" . js-json))
   ;; evil-collection's org-agenda bindings are set for motion mode
   ;; (evil-set-initial-state 'org-agenda-mode 'motion)
   ;; Make Org Pretty
