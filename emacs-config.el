@@ -26,7 +26,12 @@
   (use-dialog-box nil)                            ;; Disable dialog boxes in favor of minibuffer prompts.
   (use-short-answers t)                           ;; Use short answers in prompts for quicker responses (y instead of yes)
   (truncate-lines t)                              ;; Enable line truncation to avoid wrapping long lines.
-  (warning-minimum-level :error)              ;; Set the minimum level of warnings to display.
+  (warning-minimum-level :warning)                ;; Show warnings but not debug/info messages.
+  ;; Minibuffer settings
+  (enable-recursive-minibuffers t)                ;; Support opening new minibuffers from inside existing minibuffers.
+  (read-extended-command-predicate #'command-completion-default-include-p) ;; Hide inapplicable commands in M-x.
+  (minibuffer-prompt-properties '(read-only t cursor-intangible t face minibuffer-prompt)) ;; No cursor in prompt.
+  (text-mode-ispell-word-completion nil)          ;; Disable Ispell completion function.
 
   :config
 
