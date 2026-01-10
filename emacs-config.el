@@ -57,11 +57,12 @@
   (xterm-mouse-mode 1)         ;; Enable mouse support in terminal mode.
   (file-name-shadow-mode 1)    ;; Enable shadowing of filenames for clarity.
 
+  ;; Save more useful things in history
+  (setq savehist-additional-variables
+        '(search-ring regexp-search-ring compile-command kill-ring))
+
   ;; Set the default coding system for files to UTF-8.
   (modify-coding-system-alist 'file "" 'utf-8)
-
-  ;; Delete trailing whitespace when saving a file
-  (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
   ;; Make right-click do something sensible
   (when (display-graphic-p)
@@ -82,3 +83,7 @@
 "
                          (emacs-init-time)
                          (number-to-string (length package-activated-list))))))))
+
+;; Smart whitespace trimming - only cleans lines you edited
+(use-package ws-butler
+  :hook (prog-mode text-mode))
