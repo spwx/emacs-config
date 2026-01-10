@@ -1,6 +1,6 @@
 ;;; -*- lexical-binding: t -*-
-;; auto-insert line breaks
-(add-hook 'text-mode-hook #'auto-fill-mode)
+;; auto-insert line breaks in org-mode
+(add-hook 'org-mode-hook #'auto-fill-mode)
 
 (use-package org
   :preface
@@ -171,7 +171,6 @@
 
 ;; Pretty bullets in Org
 (use-package org-bullets
-  :mode ("\\.org\\'" . org-mode)
   :hook (org-mode . org-bullets-mode))
 
 (use-package org-appear
