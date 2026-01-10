@@ -41,7 +41,8 @@
   :init (which-key-mode))
 
 ;; Better help buffers
-(use-package helpful)
+(use-package helpful
+  :defer t)
 
 ;; Better undo
 (use-package undo-fu)
@@ -164,8 +165,6 @@
 ;;   (global-treesit-auto-mode t))
 
 ;; Language mode packages (for non-tree-sitter modes)
-(use-package rust-mode :defer t)
-(use-package typescript-mode :defer t)
 (use-package yaml-mode :defer t)
 (use-package json-mode :defer t)
 
@@ -194,27 +193,6 @@
   ;; Python: ty (default), alternatives: pyright, pylsp
   (add-to-list 'eglot-server-programs
                '((python-mode python-ts-mode) . ("ty" "server")))
-  ;; TypeScript/JavaScript: typescript-language-server
-  (add-to-list 'eglot-server-programs
-               '((js-mode js-ts-mode typescript-mode typescript-ts-mode tsx-ts-mode)
-                 . ("typescript-language-server" "--stdio")))
-  ;; Rust: rust-analyzer
-  (add-to-list 'eglot-server-programs
-               '((rust-mode rust-ts-mode) . ("rust-analyzer")))
-  ;; Bash: bash-language-server
-  (add-to-list 'eglot-server-programs
-               '((sh-mode bash-ts-mode) . ("bash-language-server" "start")))
-  ;; HTML/CSS: vscode-langservers-extracted
-  (add-to-list 'eglot-server-programs
-               '(html-mode . ("vscode-html-language-server" "--stdio")))
-  (add-to-list 'eglot-server-programs
-               '(css-mode . ("vscode-css-language-server" "--stdio")))
-  ;; JSON: vscode-json-languageserver
-  (add-to-list 'eglot-server-programs
-               '((json-mode json-ts-mode) . ("vscode-json-language-server" "--stdio")))
-  ;; YAML: yaml-language-server
-  (add-to-list 'eglot-server-programs
-               '((yaml-mode yaml-ts-mode) . ("yaml-language-server" "--stdio")))
   :general
   (my/leader-keys
     :keymaps '(python-mode-map python-ts-mode-map

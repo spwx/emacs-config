@@ -109,17 +109,10 @@
     ))
 
 ;; Shift-K in Elisp mode
-(defun my/describe-symbol-at-point ()
-  "Show help for the symbol under the cursor"
-  (interactive)
-  (let ((sym (symbol-at-point)))
-    (when sym
-      (helpful-symbol sym))))
-
 (general-define-key
  :states 'normal
  :keymaps 'emacs-lisp-mode-map
- "K" #'my/describe-symbol-at-point)
+ "K" #'helpful-at-point)
 
 ;; Make <escape> abort like C-g in the minibuffer (Emacs 28+)
 (defun my/minibuffer-escape ()
