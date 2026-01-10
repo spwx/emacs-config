@@ -2,50 +2,6 @@
 (add-hook 'text-mode-hook #'auto-fill-mode)
 
 (use-package org
-  :config
-  (add-to-list 'org-src-lang-modes '("json" . json-ts))
-  :custom
-  (org-link-frame-setup '((file . find-file))) ;; open links in the current window
-  (org-agenda-files '("~/org/tasks.org"))
-  (org-agenda-show-future-repeats nil)
-  (org-deadline-warning-days 0)
-  (org-default-notes-file "~/org/tasks.org")
-  (org-capture-templates
-   '(("t" "Schedule task" entry (file+headline "" "Tasks")
-      "* TODO %?\nSCHEDULED: %t\n%a\n\n")))
-  (org-startup-folded 'overview)
-  (org-log-into-drawer t)
-  (org-todo-keywords '((sequence "TODO(t)" "WAIT(w!)" "|" "STOP(s!)" "DONE(d!)")))
-  (org-todo-keyword-faces '(("WAIT" . "orange")
-          ("STOP" . (:foreground "dimgray" :strike-through t))))
-  (org-M-RET-may-split-line '((default . nil)))
-  (org-insert-heading-respect-content t)
-  :config
-  ;; evil-collection's org-agenda bindings are set for motion mode
-  ;; (evil-set-initial-state 'org-agenda-mode 'motion)
-  ;; Make Org Pretty
-  (add-hook 'org-mode-hook #'org-indent-mode))
-
-;; Pretty bullets in Org
-(use-package org-bullets
-  :mode ("\\.org\\'" . org-mode)
-  :hook (org-mode . org-bullets-mode))
-
-(use-package org-appear
-  :after org
-  :custom
-  (org-appear-autolinks t)
-  (org-appear-autokeywords t)
-  (org-appear-autoemphasis t)
-  (org-appear-autoentities t)
-  :hook
-  (org-mode . org-appear-mode))
-
-(use-package org-download
-  :config
-  (add-hook 'dired-mode-hook 'org-download-enable))
-
-(use-package org
   :preface
 
   ;; Convert Org to MD and copy to Clipboard
@@ -107,6 +63,30 @@
     (if (org-at-heading-p)
 	(org-promote-subtree)
       (evil-shift-left-line 1)))
+
+  :custom
+  (org-link-frame-setup '((file . find-file))) ;; open links in the current window
+  (org-agenda-files '("~/org/tasks.org"))
+  (org-agenda-show-future-repeats nil)
+  (org-deadline-warning-days 0)
+  (org-default-notes-file "~/org/tasks.org")
+  (org-capture-templates
+   '(("t" "Schedule task" entry (file+headline "" "Tasks")
+      "* TODO %?\nSCHEDULED: %t\n%a\n\n")))
+  (org-startup-folded 'overview)
+  (org-log-into-drawer t)
+  (org-todo-keywords '((sequence "TODO(t)" "WAIT(w!)" "|" "STOP(s!)" "DONE(d!)")))
+  (org-todo-keyword-faces '(("WAIT" . "orange")
+          ("STOP" . (:foreground "dimgray" :strike-through t))))
+  (org-M-RET-may-split-line '((default . nil)))
+  (org-insert-heading-respect-content t)
+
+  :config
+  (add-to-list 'org-src-lang-modes '("json" . json-ts))
+  ;; evil-collection's org-agenda bindings are set for motion mode
+  ;; (evil-set-initial-state 'org-agenda-mode 'motion)
+  ;; Make Org Pretty
+  (add-hook 'org-mode-hook #'org-indent-mode)
 
   :general
   ;; Org mode key mappings
@@ -182,6 +162,26 @@
    "C-S-j" #'org-calendar-forward-year
    "C-S-k" #'org-calendar-backward-year)
 )
+
+;; Pretty bullets in Org
+(use-package org-bullets
+  :mode ("\\.org\\'" . org-mode)
+  :hook (org-mode . org-bullets-mode))
+
+(use-package org-appear
+  :after org
+  :custom
+  (org-appear-autolinks t)
+  (org-appear-autokeywords t)
+  (org-appear-autoemphasis t)
+  (org-appear-autoentities t)
+  :hook
+  (org-mode . org-appear-mode))
+
+(use-package org-download
+  :config
+  (add-hook 'dired-mode-hook 'org-download-enable))
+
 ;; Shift-K in text/org modes
 (evil-define-key 'normal text-mode-map (kbd "K") #'dictionary-lookup-definition)
 (evil-define-key 'normal outline-mode-map (kbd "K") #'dictionary-lookup-definition)
