@@ -17,11 +17,10 @@
 ;; Auto install packages
 (setopt use-package-always-ensure t)
 
-;; Keep package-selected-packages in sync for package-autoremove
-(defun my/use-package-ensure-advice (name &rest _)
-  "Add NAME to `package-selected-packages' when use-package ensures it."
+;; Track installed packages for package-autoremove (without disk I/O on each load)
+(defun my/use-package-ensure-add-to-selected (name &rest _)
+  "Add NAME to `package-selected-packages' in memory when use-package ensures it."
   (when (and (not (package-built-in-p name))
              (not (memq name package-selected-packages)))
-    (customize-save-variable 'package-selected-packages
-                             (cons name package-selected-packages))))
-(advice-add 'use-package-ensure-elpa :after #'my/use-package-ensure-advice)
+    (add-to-list 'package-selected-packages name)))
+(advice-add 'use-package-ensure-elpa :after #'my/use-package-ensure-add-to-selected)
