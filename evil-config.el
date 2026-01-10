@@ -62,6 +62,8 @@
     "`" '(evil-buffer :wk "Last active buffer")
     ":" '(eval-expression :wk "Evaluate expression")
     "w" '(:keymap evil-window-map :wk "Windows")
+    "wu" '(winner-undo :wk "Winner undo")
+    "wU" '(winner-redo :wk "Winner redo")
     "b" '(:ignore t :wk "Buffers")
     "bb" '(switch-to-buffer :wk "Switch Buffer")
     "br" '(revert-buffer :wk "Revert Buffer")
@@ -80,6 +82,8 @@
     "ho" '(describe-symbol :wk "Help")
     "hk" '(describe-key :wk "Help")
     "hm" '(describe-mode :wk "Help")
+    "s" '(:ignore t :wk "Search")
+    "ss" '(consult-line :wk "Search buffer")
     ))
 
 ;; Shift-K in Elisp mode
