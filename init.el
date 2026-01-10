@@ -3,14 +3,15 @@
 ;; General Setting
 ;;
 
-;; Set font
-(when (display-graphic-p)
-  (add-to-list 'default-frame-alist
-               '(font . "VictorMono Nerd Font-18")))
-
 ;; *** THIS MUST COME FIRST ***
 ;; Setup the package manager
 (load-file (expand-file-name "use-package-config.el" user-emacs-directory))
+
+;; Inherit PATH from shell (fixes macOS GUI Emacs not seeing shell paths)
+(use-package exec-path-from-shell
+  :if (memq window-system '(mac ns x))
+  :config
+  (exec-path-from-shell-initialize))
 
 ;; Emacs built-ins configuration
 (load-file (expand-file-name "emacs-config.el" user-emacs-directory))
@@ -151,7 +152,8 @@
 (use-package dtrt-indent
   :config (dtrt-indent-global-mode 1))
 
-;; ;; Setup treesitter
+;; Tree-sitter for better syntax highlighting and structural editing
+;; NOTE: Disabled - causes lag on file open
 ;; (use-package treesit-auto
 ;;   :custom
 ;;   (treesit-auto-install 'prompt)
