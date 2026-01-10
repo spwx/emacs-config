@@ -48,6 +48,12 @@
   ;; (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'consult-narrow-help)
   )
 
+;; Quick directory switching
+(use-package consult-dir
+  :bind (:map minibuffer-local-completion-map
+         ("C-x d" . consult-dir)
+         ("C-x j" . consult-dir-jump-file)))
+
 ;; Icons
 (use-package nerd-icons)
 (use-package nerd-icons-completion
