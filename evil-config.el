@@ -83,7 +83,17 @@
     "hk" '(describe-key :wk "Help")
     "hm" '(describe-mode :wk "Help")
     "s" '(:ignore t :wk "Search")
-    "ss" '(consult-line :wk "Search buffer")
+    "sg" '(consult-ripgrep :wk "Grep project")
+    "sf" '(consult-find :wk "Find file")
+    "so" '(consult-outline :wk "Outline")
+    "si" '(consult-imenu :wk "Imenu")
+    "sl" '(consult-line :wk "Line")
+    "sL" '(consult-line-multi :wk "Line (all buffers)")
+    "sm" '(consult-mark :wk "Marks")
+    "sM" '(consult-global-mark :wk "Marks (global)")
+    "sk" '(consult-kmacro :wk "Kmacro")
+    "sr" '(consult-register :wk "Register")
+    "sy" '(consult-yank-pop :wk "Yank pop")
     ))
 
 ;; Shift-K in Elisp mode
