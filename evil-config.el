@@ -121,3 +121,4 @@
           (message "Cancelled"))
       (message "Current buffer is not visiting a file"))))
 (my/leader-keys "fd" '(delete-this-file :wk "Delete file"))
+(my/leader-keys "fR" '(revert-buffer-quick :wk "Reload file"))
