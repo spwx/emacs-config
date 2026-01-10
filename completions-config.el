@@ -2,12 +2,6 @@
 (use-package emacs
   :custom
 
-  ;; Save history of minibuffer
-  (savehist-mode)
-
-  ;; Add a menu in the minibuffer to switch display modes.
-  (context-menu-mode t)
-
   ;; Support opening new minibuffers from inside existing minibuffers.
   (enable-recursive-minibuffers t)
 
@@ -19,9 +13,6 @@
   ;; Do not allow the cursor in the minibuffer prompt
   (minibuffer-prompt-properties
    '(read-only t cursor-intangible t face minibuffer-prompt))
-
-  ;; Enable indentation+completion using the TAB key.
-  (tab-always-indent 'complete)
 
   ;; Disable Ispell completion function.
   (text-mode-ispell-word-completion nil))
