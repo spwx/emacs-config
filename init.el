@@ -40,6 +40,9 @@
   :custom (which-key-add-column-padding 4) ; or any larger number
   :init (which-key-mode))
 
+;; Better help buffers
+(use-package helpful)
+
 ;; Better undo
 (use-package undo-fu)
 (use-package undo-fu-session
@@ -160,3 +163,23 @@
 ;;   :config
 ;;   (treesit-auto-add-to-auto-mode-alist 'all)
 ;;   (global-treesit-auto-mode t))
+
+;; LSP support via Eglot (built-in)
+(use-package eglot
+  :ensure nil
+  :hook ((python-mode . eglot-ensure)
+         (python-ts-mode . eglot-ensure))
+  :config
+  ;; Use ty as the Python language server
+  (add-to-list 'eglot-server-programs
+               '((python-mode python-ts-mode) . ("ty" "server")))
+  :general
+  (my/leader-keys
+    :keymaps '(python-mode-map python-ts-mode-map)
+    "l" '(:ignore t :wk "LSP")
+    "la" '(eglot-code-actions :wk "Code actions")
+    "lr" '(eglot-rename :wk "Rename")
+    "lf" '(eglot-format :wk "Format")
+    "ld" '(xref-find-definitions :wk "Definition")
+    "lD" '(xref-find-references :wk "References")
+    "lh" '(eldoc :wk "Hover doc")))
