@@ -11,10 +11,12 @@
     (interactive)
     (if (use-region-p)
 	(let ((start (region-beginning))
-	      (end (region-end)))
+	      (end (region-end))
+	      (pandoc (or (executable-find "pandoc")
+			  (error "pandoc not found in PATH"))))
 	  (shell-command-on-region
 	   start end
-	   "/opt/homebrew/bin/pandoc -f org -t gfm --wrap=none | pbcopy")
+	   (concat pandoc " -f org -t gfm --wrap=none | pbcopy"))
 	  (message "Region converted to GFM and copied to clipboard"))
       (message "No region selected")))
 
@@ -24,10 +26,12 @@
   (interactive)
   (if (use-region-p)
       (let ((start (region-beginning))
-            (end (region-end)))
+            (end (region-end))
+	    (pandoc (or (executable-find "pandoc")
+			(error "pandoc not found in PATH"))))
         (shell-command-on-region
          start end
-         "/opt/homebrew/bin/pandoc -f gfm -t org --wrap=none"
+         (concat pandoc " -f gfm -t org --wrap=none")
          nil  ; OUTPUT-BUFFER (nil means temp buffer)
          t)   ; REPLACE - this replaces the region with command output
         (message "Region converted to ORG and replaced"))
@@ -185,8 +189,10 @@
   (add-hook 'dired-mode-hook 'org-download-enable))
 
 ;; Shift-K in text/org modes
-(evil-define-key 'normal text-mode-map (kbd "K") #'dictionary-lookup-definition)
-(evil-define-key 'normal outline-mode-map (kbd "K") #'dictionary-lookup-definition)
+(general-define-key
+ :states 'normal
+ :keymaps '(text-mode-map outline-mode-map)
+ "K" #'dictionary-lookup-definition)
 
 ;; RET opens a link or checks a box
 (defun my/org-activate-link-or-checkbox ()
@@ -216,8 +222,7 @@
     "dl" '(denote-link :wk "Link")
     "dL" '(denote-add-links :wk "Link")
     "db" '(denote-backlinks :wk "Backlinks")
-    "dd" '(denote-dired :wk "Dired")
-    "dG" '(denote-grep :wk "Grep"))
+    "dd" '(denote-dired :wk "Dired"))
   :config
   (setq denote-directory (expand-file-name "~/org/notes/"))
 
