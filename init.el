@@ -41,10 +41,11 @@
 
 ;; Better help buffers
 (use-package helpful
+  :defer t
   :commands (helpful-symbol helpful-callable helpful-variable helpful-key helpful-at-point))
 
 ;; Better undo
-(use-package undo-fu)
+(use-package undo-fu :defer t)
 (use-package undo-fu-session
   :config (undo-fu-session-global-mode))
 
@@ -167,9 +168,33 @@
 (use-package yaml-mode :defer t)
 (use-package json-mode :defer t)
 
+;; Helper for displaying diagnostic buffers at the bottom
+(defun my/add-bottom-window-rule (buffer-regexp)
+  "Add a display rule to show BUFFER-REGEXP in a bottom side window."
+  (add-to-list 'display-buffer-alist
+               `(,buffer-regexp
+                 (display-buffer-reuse-window display-buffer-in-side-window)
+                 (side . bottom)
+                 (reusable-frames . visible)
+                 (window-height . 0.25))))
+
 ;; Flycheck - syntax checking
 (use-package flycheck
-  :hook (rustic-mode . flycheck-mode))
+  :hook (rustic-mode . flycheck-mode)
+  :general
+  (my/leader-keys
+    :keymaps 'flycheck-mode-map
+    "le" '(flycheck-toggle-error-list :wk "Toggle errors"))
+  :config
+  (my/add-bottom-window-rule (rx bos "*Flycheck errors*" eos))
+  ;; Toggle the Flycheck error list window
+  (defun flycheck-toggle-error-list ()
+    "Toggle the Flycheck error list window."
+    (interactive)
+    (let ((window (get-buffer-window "*Flycheck errors*")))
+      (if window
+          (quit-window nil window)
+        (call-interactively #'flycheck-list-errors)))))
 
 ;; LSP Mode - Language Server Protocol client
 (use-package lsp-mode
@@ -178,9 +203,21 @@
   ;; Performance tuning
   (lsp-idle-delay 0.5)
   (lsp-log-io nil)
+  ;; Disable features we don't use (using Corfu + Tempel instead)
+  (lsp-completion-provider :none)  ; Don't use company-mode
+  (lsp-enable-snippet nil)         ; Don't use yasnippet
   ;; Rust-analyzer settings
   (lsp-rust-analyzer-cargo-watch-command "clippy")  ; Use clippy for on-save checks
   (lsp-rust-analyzer-display-inlay-hints t)
+  ;; Inlay hint settings
+  (lsp-inlay-hint-enable t)
+
+  (lsp-rust-analyzer-display-lifetime-elision-hints-enable "skip_trivial")
+  (lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names t)
+  (lsp-rust-analyzer-display-chaining-hints t)
+  (lsp-rust-analyzer-display-parameter-hints t)
+  (lsp-rust-analyzer-display-closure-return-type-hints t)
+  (lsp-rust-analyzer-closing-brace-hints t)
   :config
   ;; Disable features handled by other packages
   (setq lsp-headerline-breadcrumb-enable nil))
@@ -207,7 +244,8 @@
   :general
   ;; Shift-K for hover docs (like Vim)
   (:states 'normal :keymaps 'rustic-mode-map
-   "K" #'lsp-describe-thing-at-point)
+   "K" #'lsp-describe-thing-at-point
+   "gr" #'lsp-find-references)
   (my/leader-keys
     :keymaps 'rustic-mode-map
     "l" '(:ignore t :wk "LSP")
@@ -233,7 +271,7 @@
     "co" '(rustic-cargo-outdated :wk "Outdated")
     "cp" '(rustic-popup :wk "Popup")))
 
-;; LSP support via Eglot (built-in)
+;; LSP support via Eglot (built-in) for non-Rust languages
 (use-package eglot
   :ensure nil
   :custom
@@ -246,7 +284,6 @@
          (typescript-mode . eglot-ensure)
          (typescript-ts-mode . eglot-ensure)
          (tsx-ts-mode . eglot-ensure)
-         ;; Rust handled by rustic package
          (html-mode . eglot-ensure)
          (css-mode . eglot-ensure)
          (json-mode . eglot-ensure)
@@ -260,7 +297,27 @@
   ;; Python: ty (default), alternatives: pyright, pylsp
   (add-to-list 'eglot-server-programs
                '((python-mode python-ts-mode) . ("ty" "server")))
+  ;; Display Flymake diagnostics at bottom of frame (like Flycheck)
+  (my/add-bottom-window-rule (rx bos "*Flymake diagnostics" (* any) "*" eos))
+  ;; Toggle the Flymake diagnostics window
+  (defun flymake-toggle-diagnostics ()
+    "Toggle the Flymake diagnostics window."
+    (interactive)
+    (let ((window (seq-find (lambda (w)
+                              (string-match-p "\\*Flymake diagnostics.*\\*"
+                                              (buffer-name (window-buffer w))))
+                            (window-list))))
+      (if window
+          (quit-window nil window)
+        (call-interactively #'flymake-show-buffer-diagnostics))))
   :general
+  (:states 'normal :keymaps '(python-mode-map python-ts-mode-map
+                              js-mode-map js-ts-mode-map typescript-mode-map typescript-ts-mode-map tsx-ts-mode-map
+                              sh-mode-map bash-ts-mode-map
+                              html-mode-map css-mode-map
+                              json-mode-map json-ts-mode-map
+                              yaml-mode-map yaml-ts-mode-map)
+   "gr" #'xref-find-references)
   (my/leader-keys
     :keymaps '(python-mode-map python-ts-mode-map
                js-mode-map js-ts-mode-map typescript-mode-map typescript-ts-mode-map tsx-ts-mode-map
@@ -274,4 +331,5 @@
     "lf" '(eglot-format :wk "Format")
     "ld" '(xref-find-definitions :wk "Definition")
     "lD" '(xref-find-references :wk "References")
-    "lh" '(eldoc :wk "Hover doc")))
+    "lh" '(eldoc :wk "Hover doc")
+    "le" '(flymake-toggle-diagnostics :wk "Toggle errors")))
