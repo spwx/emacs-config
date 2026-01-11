@@ -7,6 +7,11 @@
 ;; Setup the package manager
 (load-file (expand-file-name "use-package-config.el" user-emacs-directory))
 
+;; Theme
+(use-package ef-themes
+  :config
+  (load-theme 'ef-maris-dark t))
+
 ;; Inherit PATH from shell (fixes macOS GUI Emacs not seeing shell paths)
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns x))
@@ -24,11 +29,6 @@
 
 ;; Autocomplete and Minibuffer configuration
 (load-file (expand-file-name "completions-config.el" user-emacs-directory))
-
-;; Theme
-(use-package ef-themes
-  :config
-  (load-theme 'ef-maris-dark t))
 
 ;; Pretty Modeline
 (use-package doom-modeline
