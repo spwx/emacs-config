@@ -20,7 +20,12 @@
   ;; make "gl"/"gh" available everywhere
   (evil-define-key '(normal visual) 'global
     (kbd "gl") #'evil-last-non-blank
-    (kbd "gh") #'evil-first-non-blank))
+    (kbd "gh") #'evil-first-non-blank)
+
+  ;; Error navigation (works with both flycheck and flymake)
+  (evil-define-key 'normal 'global
+    (kbd "]e") #'next-error
+    (kbd "[e") #'previous-error))
 
 ;; Evil everywhere
 (use-package evil-collection
