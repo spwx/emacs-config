@@ -1,4 +1,7 @@
 ;;; -*- lexical-binding: t -*-
+;; NOTE: This file depends on `my/leader-keys` from evil-config.el
+;; which must be loaded first (handled by init.el load order)
+
 ;; auto-insert line breaks in org-mode
 (add-hook 'org-mode-hook #'auto-fill-mode)
 
@@ -219,11 +222,12 @@
     "dn" '(denote :wk "New")
     "dr" '(denote-rename-file :wk "Rename")
     "dl" '(denote-link :wk "Link")
-    "dL" '(denote-add-links :wk "Link")
+    "dL" '(denote-add-links :wk "Add links")
     "db" '(denote-backlinks :wk "Backlinks")
     "dd" '(denote-dired :wk "Dired"))
+  :custom
+  (denote-directory (expand-file-name "~/org/notes/"))
   :config
-  (setq denote-directory (expand-file-name "~/org/notes/"))
 
   ;; Automatically rename Denote buffers when opening them so that
   ;; instead of their long file name they have, for example, a literal
