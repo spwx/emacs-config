@@ -259,4 +259,18 @@
   ;; strings.
   (setq denote-journal-keyword "journal")
   ;; Read the doc string of `denote-journal-title-format'.
-  (setq denote-journal-title-format 'day-date-month-year))
+  (setq denote-journal-title-format 'day-date-month-year)
+  (defun my/denote-journal-calendar-find-file ()
+    "Open journal entry for calendar date at point, closing the calendar."
+    (interactive)
+    (unless (derived-mode-p 'calendar-mode)
+      (user-error "Only use this command inside the `calendar'"))
+    (when-let* ((calendar-date (calendar-cursor-to-date))
+                (files (denote-journal-calendar--date-to-identifier calendar-date))
+                (file (denote-journal-select-file-prompt files)))
+      (calendar-exit)
+      (find-file file)))
+  (general-define-key
+   :states 'normal
+   :keymaps 'denote-journal-calendar-mode-map
+   "RET" #'my/denote-journal-calendar-find-file))
