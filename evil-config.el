@@ -111,8 +111,17 @@
     "pk" '(project-kill-buffers :wk "Kill buffers")
     "pc" '(project-compile :wk "Compile")
     "ps" '(project-shell :wk "Shell")
-    "a" '(calendar :wk "Calendar")
+    "a" '(my/toggle-calendar :wk "Calendar")
     ))
+
+(defun my/toggle-calendar ()
+  "Toggle the calendar window."
+  (interactive)
+  (if-let* ((buf (get-buffer "*Calendar*"))
+            (win (get-buffer-window buf)))
+      (with-current-buffer buf
+        (calendar-exit))
+    (calendar)))
 
 ;; Shift-K in Elisp mode
 (general-define-key
