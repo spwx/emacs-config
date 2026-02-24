@@ -248,7 +248,8 @@
   :general
   (my/leader-keys
     "dj" '(denote-journal-new-or-existing-entry :wk "Journal")
-    "dJ" '(denote-journal-link-or-create-entry :wk "Journal Link"))
+    "dJ" '(denote-journal-link-or-create-entry :wk "Journal Link")
+    "ds" '(my/consult-denote-journal :wk "Journal Search"))
   :hook (calendar-mode . denote-journal-calendar-mode)
   :config
   ;; Use the "journal" subdirectory of the `denote-directory'.  Set this
@@ -260,17 +261,25 @@
   (setq denote-journal-keyword "journal")
   ;; Read the doc string of `denote-journal-title-format'.
   (setq denote-journal-title-format 'day-date-month-year)
-  (defun my/denote-journal-calendar-find-file ()
-    "Open journal entry for calendar date at point, closing the calendar."
+  (my/add-bottom-window-rule "\\*Calendar\\*")
+  (defun my/consult-denote-journal ()
+    "Browse journal entries newest first with preview."
     (interactive)
-    (unless (derived-mode-p 'calendar-mode)
-      (user-error "Only use this command inside the `calendar'"))
-    (when-let* ((calendar-date (calendar-cursor-to-date))
-                (files (denote-journal-calendar--date-to-identifier calendar-date))
-                (file (denote-journal-select-file-prompt files)))
-      (calendar-exit)
-      (find-file file)))
+    (require 'consult)
+    (let* ((default-directory (denote-journal-directory))
+           (files (sort (denote-directory-files
+                         (denote-journal--keyword-regex))
+                        (lambda (a b)
+                          (string> (file-name-nondirectory a)
+                                   (file-name-nondirectory b))))))
+      (find-file
+       (consult--read
+        files
+        :prompt "Journal: "
+        :state (consult--file-preview)
+        :sort nil
+        :require-match t))))
   (general-define-key
    :states 'normal
    :keymaps 'denote-journal-calendar-mode-map
-   "RET" #'my/denote-journal-calendar-find-file))
+   "RET" #'denote-journal-calendar-new-or-existing))
