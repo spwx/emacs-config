@@ -111,6 +111,7 @@
     "pk" '(project-kill-buffers :wk "Kill buffers")
     "pc" '(project-compile :wk "Compile")
     "ps" '(project-shell :wk "Shell")
+    "a" '(calendar :wk "Calendar")
     ))
 
 ;; Shift-K in Elisp mode
