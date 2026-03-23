@@ -91,6 +91,7 @@
     "hk" '(helpful-key :wk "Key")
     "hm" '(describe-mode :wk "Mode")
     "s" '(:ignore t :wk "Search")
+    "sb" '(consult-bookmark :wk "Bookmark")
     "sg" '(consult-ripgrep :wk "Grep project")
     "sf" '(consult-find :wk "Find file")
     "so" '(consult-outline :wk "Outline")
