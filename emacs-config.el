@@ -60,6 +60,9 @@
   ;; Save more useful things in history
   (setq savehist-additional-variables
         '(search-ring regexp-search-ring compile-command kill-ring))
+  ;; Prevent savehist autosave timer from triggering TRAMP connections
+  ;; (TRAMP stat calls during autosave corrupt active SSH sessions)
+  (setq savehist-autosave-interval nil)
 
   ;; Set the default coding system for files to UTF-8.
   (modify-coding-system-alist 'file "" 'utf-8)

@@ -180,7 +180,13 @@
 
 ;; Flycheck - syntax checking
 (use-package flycheck
-  :hook (rustic-mode . flycheck-mode)
+  :hook (rustic-mode . my/flycheck-unless-remote)
+  :init
+  (defun my/flycheck-unless-remote ()
+    "Enable flycheck only for local buffers.
+Prevents running local cargo checker on remote TRAMP paths."
+    (unless (file-remote-p default-directory)
+      (flycheck-mode 1)))
   :general
   (my/leader-keys
     :keymaps 'flycheck-mode-map
@@ -195,6 +201,15 @@
       (if window
           (quit-window nil window)
         (call-interactively #'flycheck-list-errors)))))
+
+;; TRAMP - remote file editing via SSH
+(use-package tramp
+  :ensure nil
+  :defer t
+  :config
+  (add-to-list 'tramp-remote-path "~/.toolbox/bin")
+  (add-to-list 'tramp-remote-path "~/.cargo/bin")
+  (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 
 ;; LSP Mode - Language Server Protocol client
 (use-package lsp-mode
@@ -220,7 +235,15 @@
   (lsp-rust-analyzer-closing-brace-hints t)
   :config
   ;; Disable features handled by other packages
-  (setq lsp-headerline-breadcrumb-enable nil))
+  (setq lsp-headerline-breadcrumb-enable nil)
+  ;; Register remote rust-analyzer for TRAMP buffers
+  (with-eval-after-load 'lsp-rust
+    (lsp-register-client
+     (make-lsp-client
+      :new-connection (lsp-tramp-connection "rust-analyzer")
+      :major-modes '(rustic-mode rust-mode)
+      :remote? t
+      :server-id 'rust-analyzer-remote))))
 
 ;; LSP UI enhancements
 (use-package lsp-ui
@@ -241,6 +264,18 @@
   (rustic-format-on-save t)
   ;; Store cargo arguments for reuse with C-u
   (rustic-cargo-use-last-stored-arguments t)
+  :config
+  ;; Disable format-on-save for remote (TRAMP) buffers
+  ;; (local rustfmt can't format remote files)
+  (add-hook 'rustic-mode-hook
+            (lambda ()
+              (when (file-remote-p default-directory)
+                (setq-local rustic-format-on-save nil))))
+  ;; Prevent rustic-flycheck-setup from running on remote buffers
+  ;; (it invokes local cargo against remote paths, causing hangs)
+  (advice-add 'rustic-flycheck-setup :before-while
+              (lambda (&rest _)
+                (not (file-remote-p default-directory))))
   :general
   ;; Shift-K for hover docs (like Vim)
   (:states 'normal :keymaps 'rustic-mode-map
