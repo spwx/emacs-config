@@ -63,6 +63,7 @@
 
   ;; Global Key Mappings
   (my/leader-keys
+    "u" '(universal-argument :wk "Universal argument")
     "q" '(save-buffers-kill-terminal :wk "Quit Emacs")
     "x" '(execute-extended-command :wk "Execute command")
     "`" '(evil-buffer :wk "Last active buffer")
