@@ -18,6 +18,11 @@
   :config
   (exec-path-from-shell-initialize))
 
+;; Fix CC for macOS: GNU GCC from Homebrew can't compile macOS SDK headers
+;; that use Objective-C block syntax, which breaks rust-analyzer's cargo check
+(when (eq system-type 'darwin)
+  (setenv "CC" "/usr/bin/cc"))
+
 ;; Emacs built-ins configuration
 (load-file (expand-file-name "emacs-config.el" user-emacs-directory))
 
@@ -29,6 +34,37 @@
 
 ;; Autocomplete and Minibuffer configuration
 (load-file (expand-file-name "completions-config.el" user-emacs-directory))
+
+;; Window placement rules (replaces manual display-buffer-alist entries)
+(use-package shackle
+  :config
+  (setq shackle-rules
+        '(("*Flycheck errors*"                    :align below :size 0.25)
+          ("\\*Flymake diagnostics.*\\*" :regexp t :align below :size 0.25)
+          ("*Calendar*"                            :align below :size 0.25 :select t)))
+  (shackle-mode 1))
+
+;; Popup window management
+(use-package popper
+  :general
+  ("C-`" #'popper-toggle)
+  ("M-`" #'popper-cycle)
+  ("C-M-`" #'popper-toggle-type)
+  (my/leader-keys
+    "'" '(popper-toggle :wk "Toggle popup"))
+  :init
+  (setq popper-display-control nil)  ; defer placement to shackle
+  (setq popper-reference-buffers
+        '("\\*Flycheck errors\\*"
+          "\\*Flymake diagnostics.*\\*"
+          "\\*Calendar\\*"
+          "\\*Messages\\*"
+          ("\\*Warnings\\*" . hide)
+          help-mode
+          helpful-mode
+          compilation-mode))
+  (popper-mode +1)
+  (popper-echo-mode +1))
 
 ;; Pretty Modeline
 (use-package doom-modeline
@@ -168,31 +204,13 @@
 (use-package yaml-mode :defer t)
 (use-package json-mode :defer t)
 
-;; Helper for displaying diagnostic buffers at the bottom
-(defun my/add-bottom-window-rule (buffer-regexp)
-  "Add a display rule to show BUFFER-REGEXP in a bottom side window."
-  (add-to-list 'display-buffer-alist
-               `(,buffer-regexp
-                 (display-buffer-reuse-window display-buffer-in-side-window)
-                 (side . bottom)
-                 (reusable-frames . visible)
-                 (window-height . 0.25))))
-
 ;; Flycheck - syntax checking
 (use-package flycheck
-  :hook (rustic-mode . my/flycheck-unless-remote)
-  :init
-  (defun my/flycheck-unless-remote ()
-    "Enable flycheck only for local buffers.
-Prevents running local cargo checker on remote TRAMP paths."
-    (unless (file-remote-p default-directory)
-      (flycheck-mode 1)))
   :general
   (my/leader-keys
     :keymaps 'flycheck-mode-map
     "le" '(flycheck-toggle-error-list :wk "Toggle errors"))
   :config
-  (my/add-bottom-window-rule (rx bos "*Flycheck errors*" eos))
   ;; Toggle the Flycheck error list window
   (defun flycheck-toggle-error-list ()
     "Toggle the Flycheck error list window."
@@ -211,108 +229,46 @@ Prevents running local cargo checker on remote TRAMP paths."
   (add-to-list 'tramp-remote-path "~/.cargo/bin")
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 
-;; LSP Mode - Language Server Protocol client
-(use-package lsp-mode
-  :commands (lsp lsp-deferred)
-  :custom
-  ;; Performance tuning
-  (lsp-idle-delay 0.5)
-  (lsp-log-io nil)
-  ;; Disable features we don't use (using Corfu + Tempel instead)
-  (lsp-completion-provider :none)  ; Don't use company-mode
-  (lsp-enable-snippet nil)         ; Don't use yasnippet
-  ;; Rust-analyzer settings
-  (lsp-rust-analyzer-cargo-watch-command "clippy")  ; Use clippy for on-save checks
-  (lsp-rust-analyzer-display-inlay-hints t)
-  ;; Inlay hint settings
-  (lsp-inlay-hint-enable t)
-
-  (lsp-rust-analyzer-display-lifetime-elision-hints-enable "skip_trivial")
-  (lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names t)
-  (lsp-rust-analyzer-display-chaining-hints t)
-  (lsp-rust-analyzer-display-parameter-hints t)
-  (lsp-rust-analyzer-display-closure-return-type-hints t)
-  (lsp-rust-analyzer-closing-brace-hints t)
-  :config
-  ;; Disable features handled by other packages
-  (setq lsp-headerline-breadcrumb-enable nil)
-  ;; Register remote rust-analyzer for TRAMP buffers
-  (with-eval-after-load 'lsp-rust
-    (lsp-register-client
-     (make-lsp-client
-      :new-connection (lsp-tramp-connection "rust-analyzer")
-      :major-modes '(rustic-mode rust-mode)
-      :remote? t
-      :server-id 'rust-analyzer-remote))))
-
-;; LSP UI enhancements
-(use-package lsp-ui
-  :after lsp-mode
-  :custom
-  (lsp-ui-doc-enable t)
-  (lsp-ui-doc-position 'at-point)
-  (lsp-ui-sideline-enable t)
-  (lsp-ui-sideline-show-code-actions t))
-
 ;; Rust development with rustic
 (use-package rustic
-  :after (flycheck lsp-mode)
   :custom
-  ;; Use lsp-mode for better Rust support
-  (rustic-lsp-client 'lsp-mode)
-  ;; Format on save
+  (rustic-lsp-client 'eglot)
   (rustic-format-on-save t)
-  ;; Store cargo arguments for reuse with C-u
   (rustic-cargo-use-last-stored-arguments t)
   :config
+  ;; Eglot uses flymake; prevent rustic from also setting up flycheck
+  (remove-hook 'rustic-mode-hook #'rustic-flycheck-setup)
   ;; Disable format-on-save for remote (TRAMP) buffers
-  ;; (local rustfmt can't format remote files)
   (add-hook 'rustic-mode-hook
             (lambda ()
               (when (file-remote-p default-directory)
                 (setq-local rustic-format-on-save nil))))
-  ;; Prevent rustic-flycheck-setup from running on remote buffers
-  ;; (it invokes local cargo against remote paths, causing hangs)
-  (advice-add 'rustic-flycheck-setup :before-while
-              (lambda (&rest _)
-                (not (file-remote-p default-directory))))
   :general
-  ;; Shift-K for hover docs (like Vim)
-  (:states 'normal :keymaps 'rustic-mode-map
-   "K" #'lsp-describe-thing-at-point
-   "gr" #'lsp-find-references)
   (my/leader-keys
     :keymaps 'rustic-mode-map
-    "l" '(:ignore t :wk "LSP")
-    "la" '(lsp-execute-code-action :wk "Code actions")
-    "lr" '(lsp-rename :wk "Rename")
-    "lf" '(rustic-format-buffer :wk "Format")
-    "ld" '(lsp-find-definition :wk "Definition")
-    "lD" '(lsp-find-references :wk "References")
-    "lh" '(lsp-describe-thing-at-point :wk "Hover doc")
-    "lm" '(lsp-rust-analyzer-expand-macro :wk "Expand macro")
-    "li" '(lsp-rust-analyzer-inlay-hints-mode :wk "Toggle inlay hints")
-    ;; Cargo commands
-    "c" '(:ignore t :wk "Cargo")
-    "cb" '(rustic-cargo-build :wk "Build")
-    "cc" '(rustic-cargo-check :wk "Check")
-    "cr" '(rustic-cargo-run :wk "Run")
-    "ct" '(rustic-cargo-test :wk "Test")
-    "cT" '(rustic-cargo-current-test :wk "Test at point")
-    "cl" '(rustic-cargo-clippy :wk "Clippy")
-    "cf" '(rustic-cargo-fmt :wk "Cargo fmt")
-    "cd" '(rustic-cargo-doc :wk "Open docs")
-    "ca" '(rustic-cargo-add :wk "Add crate")
-    "co" '(rustic-cargo-outdated :wk "Outdated")
-    "cp" '(rustic-popup :wk "Popup")))
+    "cc" '(:ignore t :wk "Cargo")
+    "ccb" '(rustic-cargo-build :wk "Build")
+    "ccc" '(rustic-cargo-check :wk "Check")
+    "ccr" '(rustic-cargo-run :wk "Run")
+    "cct" '(rustic-cargo-test :wk "Test")
+    "ccT" '(rustic-cargo-current-test :wk "Test at point")
+    "ccl" '(rustic-cargo-clippy :wk "Clippy")
+    "ccf" '(rustic-cargo-fmt :wk "Cargo fmt")
+    "ccd" '(rustic-cargo-doc :wk "Open docs")
+    "cca" '(rustic-cargo-add :wk "Add crate")
+    "cco" '(rustic-cargo-outdated :wk "Outdated")
+    "ccp" '(rustic-popup :wk "Popup")))
 
-;; LSP support via Eglot (built-in) for non-Rust languages
+;; LSP support via Eglot (built-in)
 (use-package eglot
   :ensure nil
+  :custom-face
+  (eglot-highlight-symbol-face ((t (:inherit highlight))))
   :custom
-  (eglot-events-buffer-size 0)  ; Disable event logging for performance
-  (eglot-autoshutdown t)        ; Shutdown server when last buffer closes
-  :hook ((python-mode . eglot-ensure)
+  (eglot-events-buffer-size 0)
+  (eglot-autoshutdown t)
+  :hook ((rustic-mode . eglot-ensure)
+         (python-mode . eglot-ensure)
          (python-ts-mode . eglot-ensure)
          (js-mode . eglot-ensure)
          (js-ts-mode . eglot-ensure)
@@ -328,12 +284,25 @@ Prevents running local cargo checker on remote TRAMP paths."
          (sh-mode . eglot-ensure)
          (bash-ts-mode . eglot-ensure))
   :config
+  ;; Work around eglot caching empty inlay hint results before the
+  ;; server is ready.  Clear the region cache and refontify multiple
+  ;; times to ensure all jit-lock chunks get processed.
+  (add-hook 'eglot-managed-mode-hook
+            (lambda ()
+              (let ((buf (current-buffer)))
+                (dolist (secs '(3 6 9))
+                  (run-with-timer secs nil
+                    (lambda ()
+                      (when (buffer-live-p buf)
+                        (with-current-buffer buf
+                          (when (bound-and-true-p eglot-inlay-hints-mode)
+                            (setq eglot--outstanding-inlay-hints-last-region nil)
+                            (font-lock-flush))))))))))
+  (setq-default eglot-workspace-configuration
+    '(:rust-analyzer (:check (:command "clippy"))))
   ;; Language server configurations
-  ;; Python: ty (default), alternatives: pyright, pylsp
   (add-to-list 'eglot-server-programs
                '((python-mode python-ts-mode) . ("ty" "server")))
-  ;; Display Flymake diagnostics at bottom of frame (like Flycheck)
-  (my/add-bottom-window-rule (rx bos "*Flymake diagnostics" (* any) "*" eos))
   ;; Toggle the Flymake diagnostics window
   (defun flymake-toggle-diagnostics ()
     "Toggle the Flymake diagnostics window."
@@ -346,25 +315,17 @@ Prevents running local cargo checker on remote TRAMP paths."
           (quit-window nil window)
         (call-interactively #'flymake-show-buffer-diagnostics))))
   :general
-  (:states 'normal :keymaps '(python-mode-map python-ts-mode-map
-                              js-mode-map js-ts-mode-map typescript-mode-map typescript-ts-mode-map tsx-ts-mode-map
-                              sh-mode-map bash-ts-mode-map
-                              html-mode-map css-mode-map
-                              json-mode-map json-ts-mode-map
-                              yaml-mode-map yaml-ts-mode-map)
+  (:states 'normal :keymaps 'eglot-mode-map
+   "K" #'eldoc-doc-buffer
    "gr" #'xref-find-references)
   (my/leader-keys
-    :keymaps '(python-mode-map python-ts-mode-map
-               js-mode-map js-ts-mode-map typescript-mode-map typescript-ts-mode-map tsx-ts-mode-map
-               sh-mode-map bash-ts-mode-map
-               html-mode-map css-mode-map
-               json-mode-map json-ts-mode-map
-               yaml-mode-map yaml-ts-mode-map)
-    "l" '(:ignore t :wk "LSP")
-    "la" '(eglot-code-actions :wk "Code actions")
-    "lr" '(eglot-rename :wk "Rename")
-    "lf" '(eglot-format :wk "Format")
-    "ld" '(xref-find-definitions :wk "Definition")
-    "lD" '(xref-find-references :wk "References")
-    "lh" '(eldoc :wk "Hover doc")
-    "le" '(flymake-toggle-diagnostics :wk "Toggle errors")))
+    :keymaps 'eglot-mode-map
+    "c" '(:ignore t :wk "Code")
+    "ca" '(eglot-code-actions :wk "Code actions")
+    "cr" '(eglot-rename :wk "Rename")
+    "cf" '(eglot-format :wk "Format")
+    "cd" '(xref-find-definitions :wk "Definition")
+    "cD" '(xref-find-references :wk "References")
+    "ch" '(eldoc-doc-buffer :wk "Hover doc")
+    "ce" '(flymake-toggle-diagnostics :wk "Toggle errors")
+    "ci" '(eglot-inlay-hints-mode :wk "Toggle inlay hints")))

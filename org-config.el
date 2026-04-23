@@ -261,7 +261,6 @@
   (setq denote-journal-keyword "journal")
   ;; Read the doc string of `denote-journal-title-format'.
   (setq denote-journal-title-format 'day-date-month-year)
-  (my/add-bottom-window-rule "\\*Calendar\\*")
   (defun my/consult-denote-journal ()
     "Browse journal entries newest first with preview."
     (interactive)

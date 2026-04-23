@@ -76,7 +76,7 @@
     "bd" '(evil-delete-buffer :wk "Delete Buffer")
     "bn" '(next-buffer :wk "Next")
     "bp" '(previous-buffer :wk "Prev")
-    "bs" '(save-buffer :wk "Save file")
+    "bw" '(save-buffer :wk "Write buffer")
     "h" '(:ignore t :wk "Help")
     "ho" '(helpful-symbol :wk "Symbol")
     "hf" '(helpful-callable :wk "Function")
