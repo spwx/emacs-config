@@ -261,7 +261,10 @@
 
 ;; Breadcrumbs in header line (replaces lsp-headerline-breadcrumb-mode)
 (use-package breadcrumb
-  :init (breadcrumb-mode 1))
+  :config
+  (advice-add 'breadcrumb--header-line :override
+              (lambda () (breadcrumb-imenu-crumbs)))
+  :hook (prog-mode . breadcrumb-local-mode))
 
 ;; LSP support via Eglot (built-in)
 (use-package eglot
