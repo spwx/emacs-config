@@ -67,7 +67,10 @@
 
 ;; Pretty Modeline
 (use-package doom-modeline
-  :init (doom-modeline-mode 1))
+  :init (doom-modeline-mode 1)
+  :config
+  (doom-modeline-remove-segment 'check 'main)
+  (doom-modeline-add-segment 'check 'compilation :before 'main))
 
 ;; Key mapping hints
 (use-package which-key
