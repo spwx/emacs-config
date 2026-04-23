@@ -39,9 +39,8 @@
 (use-package shackle
   :config
   (setq shackle-rules
-        '(("*Flycheck errors*"                    :align below :size 0.25)
-          ("\\*Flymake diagnostics.*\\*" :regexp t :align below :size 0.25)
-          ("*Calendar*"                            :align below :size 0.25 :select t)))
+        '(("\\*Flymake diagnostics.*\\*" :regexp t :align below :size 0.25 :select t)))
+  (setq shackle-default-rule '(:select t))
   (shackle-mode 1))
 
 ;; Popup window management
