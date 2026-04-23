@@ -259,6 +259,10 @@
     "cco" '(rustic-cargo-outdated :wk "Outdated")
     "ccp" '(rustic-popup :wk "Popup")))
 
+;; Breadcrumbs in header line (replaces lsp-headerline-breadcrumb-mode)
+(use-package breadcrumb
+  :init (breadcrumb-mode 1))
+
 ;; LSP support via Eglot (built-in)
 (use-package eglot
   :ensure nil
