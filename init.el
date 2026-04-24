@@ -39,7 +39,8 @@
 (use-package shackle
   :config
   (setq shackle-rules
-        '(("\\*Flymake diagnostics.*\\*" :regexp t :align below :size 0.25 :select t)))
+        '(("\\*Flymake diagnostics.*\\*" :regexp t :align below :size 0.25 :select t)
+          ("*cargo-outdated*" :align below :size 0.35 :select t)))
   (setq shackle-default-rule '(:select t))
   (shackle-mode 1))
 
@@ -56,6 +57,7 @@
   (setq popper-reference-buffers
         '("\\*Flycheck errors\\*"
           "\\*Flymake diagnostics.*\\*"
+          "\\*cargo-outdated\\*"
           "\\*Calendar\\*"
           "\\*Messages\\*"
           ("\\*Warnings\\*" . hide)
