@@ -138,7 +138,7 @@
 ;; Snippets
 (use-package tempel-collection :after tempel)
 
-;; Git gutters
+;; Git gutters (margin, so fringe is free for flymake)
 (use-package diff-hl
   :general
   (my/leader-keys
@@ -148,13 +148,21 @@
     "gs" '(diff-hl-stage-dwim :wk "Stage hunk")
     "gr" '(diff-hl-revert-hunk :wk "Revert hunk")
     "gu" '(diff-hl-unstage-file :wk "Unstage all"))
+  :custom-face
+  (diff-hl-margin-insert ((t (:foreground "green" :background unspecified :inherit nil))))
+  (diff-hl-margin-change ((t (:foreground "yellow" :background unspecified :inherit nil))))
+  (diff-hl-margin-delete ((t (:foreground "red" :background unspecified :inherit nil))))
   :init
-  ;; Activate diff-hl-mode
   (global-diff-hl-mode)
-  ;; Update gutters on the fly
   (diff-hl-flydiff-mode)
+  (diff-hl-margin-mode)
   :custom
-  (diff-hl-show-staged-changes nil))
+  (diff-hl-show-staged-changes nil)
+  (diff-hl-margin-symbols-alist '((insert . "\u258E")
+                                   (delete . "\u258E")
+                                   (change . "\u258E")
+                                   (unknown . "\u258E")
+                                   (ignored . "\u258E"))))
 
 ;; Magit!
 (use-package magit
@@ -268,6 +276,32 @@
               (lambda () (breadcrumb-imenu-crumbs)))
   :hook (prog-mode . breadcrumb-local-mode))
 
+;; Flymake fringe indicators
+(use-package flymake
+  :ensure nil
+  :config
+  (define-fringe-bitmap 'flymake-arrow
+    [#b10000000
+     #b11000000
+     #b11100000
+     #b11110000
+     #b11111000
+     #b11111100
+     #b11111110
+     #b11111111
+     #b11111111
+     #b11111110
+     #b11111100
+     #b11111000
+     #b11110000
+     #b11100000
+     #b11000000
+     #b10000000] nil nil 'center)
+  :custom
+  (flymake-error-bitmap '(flymake-arrow error))
+  (flymake-warning-bitmap '(flymake-arrow warning))
+  (flymake-note-bitmap '(flymake-arrow success)))
+
 ;; LSP support via Eglot (built-in)
 (use-package eglot
   :ensure nil
@@ -338,3 +372,9 @@
     "ch" '(eldoc-doc-buffer :wk "Hover doc")
     "ce" '(flymake-toggle-diagnostics :wk "Toggle errors")
     "ci" '(eglot-inlay-hints-mode :wk "Toggle inlay hints")))
+
+(use-package eglot-booster
+  :vc (:url "https://github.com/jdtsmith/eglot-booster"
+       :rev :newest)
+  :after eglot
+  :config (eglot-booster-mode))
