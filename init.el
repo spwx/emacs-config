@@ -183,6 +183,9 @@
   :general
   (my/leader-keys
     "t" '(eat :wk "Eat (terminal)"))
+  :custom
+  (eat-minimum-latency 0.001)
+  (eat-maximum-latency 0.033)
   :config
   (add-hook 'eat-exit-hook
           (lambda (_process)
@@ -197,7 +200,41 @@
                 (delete-window win)))))
   (when (eq system-type 'darwin)
 	(define-key eat-semi-char-mode-map (kbd "C-h")  #'eat-self-input)
-	(define-key eat-semi-char-mode-map (kbd "<backspace>") (kbd "C-h"))))
+	(define-key eat-semi-char-mode-map (kbd "<backspace>") (kbd "C-h")))
+  (define-key eat-semi-char-mode-map (kbd "C-\\")
+    (lambda () (interactive) (eat-term-send-string eat-terminal "\e"))))
+
+;; Claude Code IDE protocol - shares selection, diagnostics, and diffs with Claude
+(use-package monet
+  :vc (:url "https://github.com/stevemolitor/monet" :rev :newest)
+  :config
+  (monet-mode 1))
+
+;; Claude Code CLI interface inside Emacs
+(use-package claude-code
+  :vc (:url "https://github.com/stevemolitor/claude-code.el" :rev :newest)
+  :general
+  (my/leader-keys
+    "aa" '(claude-code-toggle :wk "Toggle")
+    "as" '(claude-code :wk "Start")
+    "ac" '(claude-code-continue :wk "Continue")
+    "aR" '(claude-code-resume :wk "Resume")
+    "aq" '(claude-code-kill :wk "Kill")
+    "aQ" '(claude-code-kill-all :wk "Kill all")
+    "ab" '(claude-code-send-buffer-file :wk "Send buffer file")
+    "af" '(claude-code-send-file :wk "Send file")
+    "ap" '(claude-code-send-command :wk "Prompt")
+    "ay" '(claude-code-send-return :wk "Send yes")
+    "an" '(claude-code-send-escape :wk "Send no/esc")
+    "am" '(claude-code-transient :wk "Menu"))
+  (my/leader-keys
+    :states '(visual)
+    "ar" '(claude-code-send-region :wk "Send region")
+    "aM" '(monet-mention :wk "Mention region"))
+  :custom
+  (claude-code-terminal-backend 'eat)
+  :config
+  (add-hook 'claude-code-process-environment-functions #'monet-start-server-function))
 
 ;; Try to configure indentation per file
 (use-package dtrt-indent
