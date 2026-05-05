@@ -202,7 +202,10 @@
 	(define-key eat-semi-char-mode-map (kbd "C-h")  #'eat-self-input)
 	(define-key eat-semi-char-mode-map (kbd "<backspace>") (kbd "C-h")))
   (define-key eat-semi-char-mode-map (kbd "C-\\")
-    (lambda () (interactive) (eat-term-send-string eat-terminal "\e"))))
+    (lambda () (interactive) (eat-term-send-string eat-terminal "\e")))
+  (define-key eat-semi-char-mode-map (kbd "s-v")
+    (lambda () (interactive)
+      (eat-term-send-string eat-terminal (current-kill 0)))))
 
 ;; Claude Code IDE protocol - shares selection, diagnostics, and diffs with Claude
 (use-package monet
