@@ -311,13 +311,6 @@
     "cco" '(rustic-cargo-outdated :wk "Outdated")
     "ccp" '(rustic-popup :wk "Popup")))
 
-;; Breadcrumbs in header line (replaces lsp-headerline-breadcrumb-mode)
-(use-package breadcrumb
-  :config
-  (advice-add 'breadcrumb--header-line :override
-              (lambda () (breadcrumb-imenu-crumbs)))
-  :hook (prog-mode . breadcrumb-local-mode))
-
 ;; Flymake fringe indicators
 (use-package flymake
   :ensure nil
