@@ -413,3 +413,8 @@
        :rev :newest)
   :after eglot
   :config (eglot-booster-mode))
+
+;; Machine-local configuration (not tracked by git)
+(let ((local-config (expand-file-name "local-config.el" user-emacs-directory)))
+  (when (file-exists-p local-config)
+    (load-file local-config)))
