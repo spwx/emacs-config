@@ -151,9 +151,9 @@
     "gr" '(diff-hl-revert-hunk :wk "Revert hunk")
     "gu" '(diff-hl-unstage-file :wk "Unstage all"))
   :custom-face
-  (diff-hl-margin-insert ((t (:foreground "green" :background unspecified :inherit nil))))
-  (diff-hl-margin-change ((t (:foreground "yellow" :background unspecified :inherit nil))))
-  (diff-hl-margin-delete ((t (:foreground "red" :background unspecified :inherit nil))))
+  (diff-hl-margin-insert ((t (:foreground "green" :inherit default))))
+  (diff-hl-margin-change ((t (:foreground "yellow" :inherit default))))
+  (diff-hl-margin-delete ((t (:foreground "red" :inherit default))))
   :init
   (global-diff-hl-mode)
   (diff-hl-flydiff-mode)
