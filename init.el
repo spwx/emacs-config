@@ -1,16 +1,11 @@
 ;;; init.el --- Main Emacs configuration entry point -*- lexical-binding: t -*-
-;;
-;; General Setting
-;;
+
+;;; --- Package Manager ---
 
 ;; *** THIS MUST COME FIRST ***
-;; Setup the package manager
 (load-file (expand-file-name "use-package-config.el" user-emacs-directory))
 
-;; Theme
-(use-package ef-themes
-  :config
-  (load-theme 'ef-maris-dark t))
+;;; --- Environment ---
 
 ;; Inherit PATH from shell (fixes macOS GUI Emacs not seeing shell paths)
 (use-package exec-path-from-shell
@@ -23,17 +18,41 @@
 (when (eq system-type 'darwin)
   (setenv "CC" "/usr/bin/cc"))
 
-;; Emacs built-ins configuration
-(load-file (expand-file-name "emacs-config.el" user-emacs-directory))
+;; GC optimization - restores gc-cons-threshold after startup
+(use-package gcmh
+  :init (gcmh-mode 1))
 
-;; Vim (evil) key mappings configuration
-(load-file (expand-file-name "evil-config.el" user-emacs-directory))
+;;; --- UI ---
 
-;; Org-mode configuration
-(load-file (expand-file-name "org-config.el" user-emacs-directory))
+;; Theme
+(use-package ef-themes
+  :config
+  (load-theme 'ef-maris-dark t))
 
-;; Autocomplete and Minibuffer configuration
-(load-file (expand-file-name "completions-config.el" user-emacs-directory))
+;; Pretty Modeline
+(use-package doom-modeline
+  :init (doom-modeline-mode 1)
+  :config
+  (doom-modeline-remove-segment 'check 'main)
+  (doom-modeline-add-segment 'check 'compilation :before 'main))
+
+;; Key mapping hints
+(use-package which-key
+  :custom (which-key-add-column-padding 4)
+  :init (which-key-mode))
+
+;; Colorful delimiters
+(use-package rainbow-delimiters
+  :hook ((prog-mode . rainbow-delimiters-mode)
+         (conf-mode . rainbow-delimiters-mode)))
+
+;; Show number of search results
+(use-package anzu
+  :config (global-anzu-mode +1))
+(use-package evil-anzu
+  :after (evil anzu))
+
+;;; --- Window Management ---
 
 ;; Window placement rules (replaces manual display-buffer-alist entries)
 (use-package shackle
@@ -55,8 +74,7 @@
   :init
   (setq popper-display-control nil)  ; defer placement to shackle
   (setq popper-reference-buffers
-        '("\\*Flycheck errors\\*"
-          "\\*Flymake diagnostics.*\\*"
+        '("\\*Flymake diagnostics.*\\*"
           "\\*cargo-outdated\\*"
           "\\*Calendar\\*"
           "\\*Messages\\*"
@@ -67,49 +85,18 @@
   (popper-mode +1)
   (popper-echo-mode +1))
 
-;; Pretty Modeline
-(use-package doom-modeline
-  :init (doom-modeline-mode 1)
-  :config
-  (doom-modeline-remove-segment 'check 'main)
-  (doom-modeline-add-segment 'check 'compilation :before 'main))
-
-;; Key mapping hints
-(use-package which-key
-  :custom (which-key-add-column-padding 4) ; or any larger number
-  :init (which-key-mode))
-
-;; Better help buffers
-(use-package helpful
-  :defer t
-  :commands (helpful-symbol helpful-callable helpful-variable helpful-key helpful-at-point))
+;;; --- Editing ---
 
 ;; Better undo
 (use-package undo-fu :defer t)
 (use-package undo-fu-session
   :config (undo-fu-session-global-mode))
 
-;; GC optimization - restores gc-cons-threshold after startup
-(use-package gcmh
-  :init (gcmh-mode 1))
-
-;; Show number of search results
-(use-package anzu
-  :config (global-anzu-mode +1))
-(use-package evil-anzu
-  :after (evil anzu))
-
 ;; Better navigation
 (use-package avy
   :general
   (:keymaps 'global :states 'normal "s" #'avy-goto-char-timer)
   (:keymaps 'global :states 'normal "gs" #'avy-resume))
-
-;; Colorful delimiters
-(use-package rainbow-delimiters
-  :hook ((prog-mode . rainbow-delimiters-mode)
-         ;; (text-mode . rainbow-delimiters-mode)
-         (conf-mode . rainbow-delimiters-mode)))
 
 ;; Spell checking
 (use-package jinx
@@ -139,6 +126,19 @@
 
 ;; Snippets
 (use-package tempel-collection :after tempel)
+
+;; Try to configure indentation per file
+(use-package dtrt-indent
+  :config (dtrt-indent-global-mode 1))
+
+;;; --- Help ---
+
+;; Better help buffers
+(use-package helpful
+  :defer t
+  :commands (helpful-symbol helpful-callable helpful-variable helpful-key helpful-at-point))
+
+;;; --- Git ---
 
 ;; Git gutters (margin, so fringe is free for flymake)
 (use-package diff-hl
@@ -178,138 +178,7 @@
   ;; Turns on magit nerd-icons
   (magit-format-file-function #'magit-format-file-nerd-icons))
 
-;; Terminal Emulator
-(use-package eat
-  :general
-  (my/leader-keys
-    "t" '(eat :wk "Eat (terminal)"))
-  :custom
-  (eat-minimum-latency 0.001)
-  (eat-maximum-latency 0.033)
-  :config
-  (add-hook 'eat-exit-hook
-          (lambda (_process)
-			;; Get the window of the current buffer
-            (let ((win (get-buffer-window (current-buffer))))
-			  ;; If the current buffer is alive, kill it
-              (when (buffer-live-p (current-buffer))
-                (kill-buffer (current-buffer)))
-			  ;; If there is more than 1 window, delete the window the current
-			  ;; buffer was in
-              (when (and win (> (length (window-list)) 1))
-                (delete-window win)))))
-  (when (eq system-type 'darwin)
-	(define-key eat-semi-char-mode-map (kbd "C-h")  #'eat-self-input)
-	(define-key eat-semi-char-mode-map (kbd "<backspace>") (kbd "C-h")))
-  (define-key eat-semi-char-mode-map (kbd "C-\\")
-    (lambda () (interactive) (eat-term-send-string eat-terminal "\e")))
-  (define-key eat-semi-char-mode-map (kbd "s-v")
-    (lambda () (interactive)
-      (eat-term-send-string eat-terminal (current-kill 0)))))
-
-;; Claude Code IDE protocol - shares selection, diagnostics, and diffs with Claude
-(use-package monet
-  :vc (:url "https://github.com/stevemolitor/monet" :rev :newest)
-  :config
-  (monet-mode 1))
-
-;; Claude Code CLI interface inside Emacs
-(use-package claude-code
-  :vc (:url "https://github.com/stevemolitor/claude-code.el" :rev :newest)
-  :general
-  (my/leader-keys
-    "aa" '(claude-code-toggle :wk "Toggle")
-    "as" '(claude-code :wk "Start")
-    "ac" '(claude-code-continue :wk "Continue")
-    "aR" '(claude-code-resume :wk "Resume")
-    "aq" '(claude-code-kill :wk "Kill")
-    "aQ" '(claude-code-kill-all :wk "Kill all")
-    "ab" '(claude-code-send-buffer-file :wk "Send buffer file")
-    "af" '(claude-code-send-file :wk "Send file")
-    "ap" '(claude-code-send-command :wk "Prompt")
-    "ay" '(claude-code-send-return :wk "Send yes")
-    "an" '(claude-code-send-escape :wk "Send no/esc")
-    "am" '(claude-code-transient :wk "Menu"))
-  (my/leader-keys
-    :states '(visual)
-    "ar" '(claude-code-send-region :wk "Send region")
-    "aM" '(monet-mention :wk "Mention region"))
-  :custom
-  (claude-code-terminal-backend 'eat)
-  :config
-  (add-hook 'claude-code-process-environment-functions #'monet-start-server-function))
-
-;; Try to configure indentation per file
-(use-package dtrt-indent
-  :config (dtrt-indent-global-mode 1))
-
-;; Tree-sitter for better syntax highlighting and structural editing
-;; NOTE: Disabled - causes lag when scrolling through files in find-file
-;; (use-package treesit-auto
-;;   :custom
-;;   (treesit-auto-install nil)
-;;   :config
-;;   (treesit-auto-add-to-auto-mode-alist 'all)
-;;   (global-treesit-auto-mode t))
-
-;; Language mode packages (for non-tree-sitter modes)
-(use-package yaml-mode :defer t)
-(use-package json-mode :defer t)
-
-;; Flycheck - syntax checking
-(use-package flycheck
-  :general
-  (my/leader-keys
-    :keymaps 'flycheck-mode-map
-    "le" '(flycheck-toggle-error-list :wk "Toggle errors"))
-  :config
-  ;; Toggle the Flycheck error list window
-  (defun flycheck-toggle-error-list ()
-    "Toggle the Flycheck error list window."
-    (interactive)
-    (let ((window (get-buffer-window "*Flycheck errors*")))
-      (if window
-          (quit-window nil window)
-        (call-interactively #'flycheck-list-errors)))))
-
-;; TRAMP - remote file editing via SSH
-(use-package tramp
-  :ensure nil
-  :defer t
-  :config
-  (add-to-list 'tramp-remote-path "~/.toolbox/bin")
-  (add-to-list 'tramp-remote-path "~/.cargo/bin")
-  (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
-
-;; Rust development with rustic
-(use-package rustic
-  :custom
-  (rustic-lsp-client 'eglot)
-  (rustic-format-on-save t)
-  (rustic-cargo-use-last-stored-arguments t)
-  :config
-  ;; Eglot uses flymake; prevent rustic from also setting up flycheck
-  (remove-hook 'rustic-mode-hook #'rustic-flycheck-setup)
-  ;; Disable format-on-save for remote (TRAMP) buffers
-  (add-hook 'rustic-mode-hook
-            (lambda ()
-              (when (file-remote-p default-directory)
-                (setq-local rustic-format-on-save nil))))
-  :general
-  (my/leader-keys
-    :keymaps 'rustic-mode-map
-    "cc" '(:ignore t :wk "Cargo")
-    "ccb" '(rustic-cargo-build :wk "Build")
-    "ccc" '(rustic-cargo-check :wk "Check")
-    "ccr" '(rustic-cargo-run :wk "Run")
-    "cct" '(rustic-cargo-test :wk "Test")
-    "ccT" '(rustic-cargo-current-test :wk "Test at point")
-    "ccl" '(rustic-cargo-clippy :wk "Clippy")
-    "ccf" '(rustic-cargo-fmt :wk "Cargo fmt")
-    "ccd" '(rustic-cargo-doc :wk "Open docs")
-    "cca" '(rustic-cargo-add :wk "Add crate")
-    "cco" '(rustic-cargo-outdated :wk "Outdated")
-    "ccp" '(rustic-popup :wk "Popup")))
+;;; --- LSP & Diagnostics ---
 
 ;; Flymake fringe indicators
 (use-package flymake
@@ -332,6 +201,17 @@
      #b11100000
      #b11000000
      #b10000000] nil nil 'center)
+  ;; Toggle the Flymake diagnostics window
+  (defun flymake-toggle-diagnostics ()
+    "Toggle the Flymake diagnostics window."
+    (interactive)
+    (let ((window (seq-find (lambda (w)
+                              (string-match-p "\\*Flymake diagnostics.*\\*"
+                                              (buffer-name (window-buffer w))))
+                            (window-list))))
+      (if window
+          (quit-window nil window)
+        (call-interactively #'flymake-show-buffer-diagnostics))))
   :custom
   (flymake-error-bitmap '(flymake-arrow error))
   (flymake-warning-bitmap '(flymake-arrow warning))
@@ -381,17 +261,6 @@
   ;; Language server configurations
   (add-to-list 'eglot-server-programs
                '((python-mode python-ts-mode) . ("ty" "server")))
-  ;; Toggle the Flymake diagnostics window
-  (defun flymake-toggle-diagnostics ()
-    "Toggle the Flymake diagnostics window."
-    (interactive)
-    (let ((window (seq-find (lambda (w)
-                              (string-match-p "\\*Flymake diagnostics.*\\*"
-                                              (buffer-name (window-buffer w))))
-                            (window-list))))
-      (if window
-          (quit-window nil window)
-        (call-interactively #'flymake-show-buffer-diagnostics))))
   :general
   (:states 'normal :keymaps 'eglot-mode-map
    "K" #'eldoc-doc-buffer
@@ -414,7 +283,143 @@
   :after eglot
   :config (eglot-booster-mode))
 
-;; Machine-local configuration (not tracked by git)
+;;; --- Languages ---
+
+;; Tree-sitter for better syntax highlighting and structural editing
+;; NOTE: Disabled - causes lag when scrolling through files in find-file
+;; (use-package treesit-auto
+;;   :custom
+;;   (treesit-auto-install nil)
+;;   :config
+;;   (treesit-auto-add-to-auto-mode-alist 'all)
+;;   (global-treesit-auto-mode t))
+
+;; Language mode packages (for non-tree-sitter modes)
+(use-package yaml-mode :defer t)
+(use-package json-mode :defer t)
+
+;; Rust development with rustic
+(use-package rustic
+  :custom
+  (rustic-lsp-client 'eglot)
+  (rustic-format-on-save t)
+  (rustic-cargo-use-last-stored-arguments t)
+  :config
+  ;; Eglot uses flymake; prevent rustic from also setting up flycheck
+  (remove-hook 'rustic-mode-hook #'rustic-flycheck-setup)
+  ;; Disable format-on-save for remote (TRAMP) buffers
+  (add-hook 'rustic-mode-hook
+            (lambda ()
+              (when (file-remote-p default-directory)
+                (setq-local rustic-format-on-save nil))))
+  :general
+  (my/leader-keys
+    :keymaps 'rustic-mode-map
+    "cc" '(:ignore t :wk "Cargo")
+    "ccb" '(rustic-cargo-build :wk "Build")
+    "ccc" '(rustic-cargo-check :wk "Check")
+    "ccr" '(rustic-cargo-run :wk "Run")
+    "cct" '(rustic-cargo-test :wk "Test")
+    "ccT" '(rustic-cargo-current-test :wk "Test at point")
+    "ccl" '(rustic-cargo-clippy :wk "Clippy")
+    "ccf" '(rustic-cargo-fmt :wk "Cargo fmt")
+    "ccd" '(rustic-cargo-doc :wk "Open docs")
+    "cca" '(rustic-cargo-add :wk "Add crate")
+    "cco" '(rustic-cargo-outdated :wk "Outdated")
+    "ccp" '(rustic-popup :wk "Popup")))
+
+;;; --- Terminal ---
+
+;; Terminal Emulator
+(use-package eat
+  :general
+  (my/leader-keys
+    "t" '(eat :wk "Eat (terminal)"))
+  :custom
+  (eat-minimum-latency 0.001)
+  (eat-maximum-latency 0.033)
+  :config
+  (add-hook 'eat-exit-hook
+          (lambda (_process)
+			;; Get the window of the current buffer
+            (let ((win (get-buffer-window (current-buffer))))
+			  ;; If the current buffer is alive, kill it
+              (when (buffer-live-p (current-buffer))
+                (kill-buffer (current-buffer)))
+			  ;; If there is more than 1 window, delete the window the current
+			  ;; buffer was in
+              (when (and win (> (length (window-list)) 1))
+                (delete-window win)))))
+  (when (eq system-type 'darwin)
+	(define-key eat-semi-char-mode-map (kbd "C-h")  #'eat-self-input)
+	(define-key eat-semi-char-mode-map (kbd "<backspace>") (kbd "C-h")))
+  (define-key eat-semi-char-mode-map (kbd "C-\\")
+    (lambda () (interactive) (eat-term-send-string eat-terminal "\e")))
+  (define-key eat-semi-char-mode-map (kbd "s-v")
+    (lambda () (interactive)
+      (eat-term-send-string eat-terminal (current-kill 0)))))
+
+;;; --- AI ---
+
+;; Claude Code IDE protocol - shares selection, diagnostics, and diffs with Claude
+(use-package monet
+  :vc (:url "https://github.com/stevemolitor/monet" :rev :newest)
+  :config
+  (monet-mode 1))
+
+;; Claude Code CLI interface inside Emacs
+(use-package claude-code
+  :vc (:url "https://github.com/stevemolitor/claude-code.el" :rev :newest)
+  :general
+  (my/leader-keys
+    "aa" '(claude-code-toggle :wk "Toggle")
+    "as" '(claude-code :wk "Start")
+    "ac" '(claude-code-continue :wk "Continue")
+    "aR" '(claude-code-resume :wk "Resume")
+    "aq" '(claude-code-kill :wk "Kill")
+    "aQ" '(claude-code-kill-all :wk "Kill all")
+    "ab" '(claude-code-send-buffer-file :wk "Send buffer file")
+    "af" '(claude-code-send-file :wk "Send file")
+    "ap" '(claude-code-send-command :wk "Prompt")
+    "ay" '(claude-code-send-return :wk "Send yes")
+    "an" '(claude-code-send-escape :wk "Send no/esc")
+    "am" '(claude-code-transient :wk "Menu"))
+  (my/leader-keys
+    :states '(visual)
+    "ar" '(claude-code-send-region :wk "Send region")
+    "aM" '(monet-mention :wk "Mention region"))
+  :custom
+  (claude-code-terminal-backend 'eat)
+  :config
+  (add-hook 'claude-code-process-environment-functions #'monet-start-server-function))
+
+;;; --- Remote ---
+
+;; TRAMP - remote file editing via SSH
+(use-package tramp
+  :ensure nil
+  :defer t
+  :config
+  (add-to-list 'tramp-remote-path "~/.toolbox/bin")
+  (add-to-list 'tramp-remote-path "~/.cargo/bin")
+  (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
+
+;;; --- External Config Files ---
+
+;; Emacs built-ins configuration
+(load-file (expand-file-name "emacs-config.el" user-emacs-directory))
+
+;; Vim (evil) key mappings configuration
+(load-file (expand-file-name "evil-config.el" user-emacs-directory))
+
+;; Org-mode configuration
+(load-file (expand-file-name "org-config.el" user-emacs-directory))
+
+;; Autocomplete and Minibuffer configuration
+(load-file (expand-file-name "completions-config.el" user-emacs-directory))
+
+;;; --- Machine-local (not tracked by git) ---
+
 (let ((local-config (expand-file-name "local-config.el" user-emacs-directory)))
   (when (file-exists-p local-config)
     (load-file local-config)))

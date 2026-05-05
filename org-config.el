@@ -111,6 +111,7 @@
     "oe" '(org-export-dispatch :wk "Export")
     "ot" '(org-todo :wk "Todo")
     "oT" '(org-show-todo-tree :wk "Todo tree")
+    "og" '(org-set-tags-command :wk "Tag")
     "or" '(org-refile :wk "Refile")
     "o*" '(org-ctrl-c-star :wk "Make headline")
     "o-" '(org-ctrl-c-minus :wk "Make list")

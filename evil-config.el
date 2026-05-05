@@ -22,7 +22,7 @@
     (kbd "gl") #'evil-last-non-blank
     (kbd "gh") #'evil-first-non-blank)
 
-  ;; Error navigation (works with both flycheck and flymake)
+  ;; Error navigation (works with flymake)
   (evil-define-key 'normal 'global
     (kbd "]e") #'next-error
     (kbd "[e") #'previous-error))
