@@ -103,7 +103,7 @@
     "sy" '(consult-yank-pop :wk "Yank pop")
     "g" '(:ignore t :wk "Git")
     "p" '(:ignore t :wk "Project")
-    "pp" '(project-switch-project :wk "Switch project")
+    "sp" '(project-switch-project :wk "Switch project")
     "pf" '(project-find-file :wk "Find file")
     "pd" '(project-dired :wk "Dired")
     "pb" '(project-switch-to-buffer :wk "Switch buffer")
