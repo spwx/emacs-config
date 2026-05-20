@@ -371,31 +371,9 @@
   :config
   (monet-mode 1))
 
-;; Claude Code CLI interface inside Emacs
-(use-package claude-code
-  :vc (:url "https://github.com/stevemolitor/claude-code.el" :rev :newest)
-  :general
-  (my/leader-keys
-    "aa" '(claude-code-toggle :wk "Toggle")
-    "as" '(claude-code :wk "Start")
-    "ac" '(claude-code-continue :wk "Continue")
-    "aR" '(claude-code-resume :wk "Resume")
-    "aq" '(claude-code-kill :wk "Kill")
-    "aQ" '(claude-code-kill-all :wk "Kill all")
-    "ab" '(claude-code-send-buffer-file :wk "Send buffer file")
-    "af" '(claude-code-send-file :wk "Send file")
-    "ap" '(claude-code-send-command :wk "Prompt")
-    "ay" '(claude-code-send-return :wk "Send yes")
-    "an" '(claude-code-send-escape :wk "Send no/esc")
-    "am" '(claude-code-transient :wk "Menu"))
-  (my/leader-keys
-    :states '(visual)
-    "ar" '(claude-code-send-region :wk "Send region")
-    "aM" '(monet-mention :wk "Mention region"))
-  :custom
-  (claude-code-terminal-backend 'eat)
-  :config
-  (add-hook 'claude-code-process-environment-functions #'monet-start-server-function))
+(my/leader-keys
+  :states '(visual)
+  "aM" '(monet-mention :wk "Mention region"))
 
 ;;; --- Remote ---
 
