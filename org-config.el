@@ -112,6 +112,7 @@
   (my/leader-keys
     :keymaps 'org-mode-map
     :states '(normal)
+    "oA" '(org-archive-subtree :wk "Archive")
     "oe" '(org-export-dispatch :wk "Export")
     "ot" '(org-todo :wk "Todo")
     "og" '(org-set-tags-command :wk "Tag")
