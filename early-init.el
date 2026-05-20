@@ -2,6 +2,9 @@
 (add-to-list 'default-frame-alist '(undecorated-round . t))
 (add-to-list 'default-frame-alist '(font . "VictorMono Nerd Font-18"))
 
+;; Prefer newer .el over stale .elc (e.g. after editing without recompiling)
+(setq load-prefer-newer t)
+
 ;; Startup speed, annoyance suppression
 (setq gc-cons-threshold most-positive-fixnum)
 (setq byte-compile-warnings '(not obsolete))
