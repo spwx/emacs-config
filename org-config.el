@@ -107,13 +107,13 @@
     :states '(normal visual)
     "o"  '(:ignore t :wk "Org")
     "oa" '(org-agenda :wk "Agenda")
-    "oc" '(org-capture :wk "Capture"))
+    "oc" '(org-capture :wk "Capture")
+    "oT" '(org-cycle-agenda-files :wk "Tasks file"))
   (my/leader-keys
     :keymaps 'org-mode-map
     :states '(normal)
     "oe" '(org-export-dispatch :wk "Export")
     "ot" '(org-todo :wk "Todo")
-    "oT" '(org-show-todo-tree :wk "Todo tree")
     "og" '(org-set-tags-command :wk "Tag")
     "or" '(org-refile :wk "Refile")
     "o*" '(org-ctrl-c-star :wk "Make headline")
@@ -127,7 +127,8 @@
     "oid" '(org-deadline :wk "Deadline")
     "ois" '(org-schedule :wk "Schedule")
     "oil" '(org-insert-link :wk "Insert link")
-    "oiy" '(org-store-link :wk "Store link"))
+    "oiy" '(org-store-link :wk "Store link")
+    "oip" '(org-set-property :wk "Set property"))
   (my/leader-keys
     :keymaps 'org-mode-map
     :states '(visual)
