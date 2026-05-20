@@ -97,6 +97,8 @@
   ;; (evil-set-initial-state 'org-agenda-mode 'motion)
   ;; Make Org Pretty
   (add-hook 'org-mode-hook #'org-indent-mode)
+  ;; Tempel completion in org buffers
+  (add-hook 'org-mode-hook #'tempel-setup-capf)
 
   :general
   ;; Org mode key mappings
