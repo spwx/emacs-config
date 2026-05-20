@@ -79,7 +79,7 @@
   (org-deadline-warning-days 0)
   (org-default-notes-file "~/org/tasks.org")
   (org-capture-templates
-   '(("t" "Schedule task" entry (file+headline "" "Tasks")
+   '(("t" "Schedule task" entry (file+headline "" "Incoming")
       "* TODO %?\nSCHEDULED: %t\n%a\n\n")))
   (org-startup-folded 'overview)
   (org-log-into-drawer t)
