@@ -5,6 +5,10 @@
 ;; *** THIS MUST COME FIRST ***
 (load-file (expand-file-name "use-package-config.el" user-emacs-directory))
 
+;; Load evil/general early so `:general` keyword is registered with use-package
+;; before any subsequent use-package blocks try to use it.
+(load-file (expand-file-name "evil-config.el" user-emacs-directory))
+
 ;;; --- Environment ---
 
 ;; Inherit PATH from shell (fixes macOS GUI Emacs not seeing shell paths)
@@ -408,9 +412,6 @@
 
 ;; Emacs built-ins configuration
 (load-file (expand-file-name "emacs-config.el" user-emacs-directory))
-
-;; Vim (evil) key mappings configuration
-(load-file (expand-file-name "evil-config.el" user-emacs-directory))
 
 ;; Org-mode configuration
 (load-file (expand-file-name "org-config.el" user-emacs-directory))
