@@ -88,6 +88,7 @@
           ("STOP" . (:foreground "dimgray" :strike-through t))))
   (org-M-RET-may-split-line '((default . nil)))
   (org-insert-heading-respect-content t)
+  (org-src-tab-acts-natively nil)
 
   :config
   ;; Map json src blocks to js-json-mode (tree-sitter modes don't work well in org src blocks)
