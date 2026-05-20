@@ -107,22 +107,22 @@
 ;; Snippet Engine
 (use-package tempel
   :bind
-    (:map tempel-map
-	    ("<tab>" . tempel-next)
-	    ("TAB" . tempel-next)
-	    ("<backtab>" . tempel-previous))
-  :general
-  (:keymaps 'global :states '(normal visual) "gt" #'tempel-insert)
-  :init
-  ;; Setup completion at point
-  (defun tempel-setup-capf ()
-    (setq-local completion-at-point-functions
-                (cons #'tempel-complete
-                      completion-at-point-functions)))
+  (:map tempel-map
+        ("<tab>" . tempel-next)
+        ("TAB" . tempel-next)
+        ("<backtab>" . tempel-previous))
+  :config
+  (evil-make-intercept-map tempel-map 'insert))
 
-  (add-hook 'conf-mode-hook 'tempel-setup-capf)
-  (add-hook 'prog-mode-hook 'tempel-setup-capf)
-  (add-hook 'text-mode-hook 'tempel-setup-capf))
+;; Setup tempel completion at point
+(defun tempel-setup-capf ()
+  (setq-local completion-at-point-functions
+              (cons #'tempel-complete
+                    completion-at-point-functions)))
+
+(add-hook 'conf-mode-hook 'tempel-setup-capf)
+(add-hook 'prog-mode-hook 'tempel-setup-capf)
+(add-hook 'text-mode-hook 'tempel-setup-capf)
 
 ;; Snippets
 (use-package tempel-collection :after tempel)
