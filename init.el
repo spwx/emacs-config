@@ -372,8 +372,14 @@
   (monet-mode 1))
 
 (my/leader-keys
-  :states '(visual)
-  "aM" '(monet-mention :wk "Mention region"))
+  "as" '(monet-start-server     :wk "Monet: start server")
+  "aq" '(monet-stop-server      :wk "Monet: stop server")
+  "aQ" '(monet-stop-all-servers :wk "Monet: stop all servers")
+  "al" '(monet-list-sessions    :wk "Monet: list sessions"))
+
+(my/leader-keys
+  :states '(normal visual)
+  "aM" '(monet-mention-region :wk "Monet: mention region/line"))
 
 ;;; --- Remote ---
 
