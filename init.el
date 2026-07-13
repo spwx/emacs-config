@@ -12,8 +12,13 @@
 ;;; --- Environment ---
 
 ;; Inherit PATH from shell (fixes macOS GUI Emacs not seeing shell paths)
+;; "-i" is required: fish's config.fish does all PATH setup (brew shellenv,
+;; cargo, etc.) inside `if status --is-interactive`, which a plain login
+;; shell skips.
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns x))
+  :custom
+  (exec-path-from-shell-arguments '("-l" "-i"))
   :config
   (exec-path-from-shell-initialize))
 
