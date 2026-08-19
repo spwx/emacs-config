@@ -117,6 +117,7 @@
     "ot" '(org-todo :wk "Todo")
     "og" '(org-set-tags-command :wk "Tag")
     "or" '(org-refile :wk "Refile")
+    "on" '(org-toggle-narrow-to-subtree :wk "Narrow subtree")
     "o*" '(org-ctrl-c-star :wk "Make headline")
     "o-" '(org-ctrl-c-minus :wk "Make list")
     "oB" '(org-babel-tangle :wk "tangle")
